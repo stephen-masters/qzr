@@ -1,0 +1,12 @@
+target
+*/target
+
+*.project
+*.settings
+*.springBeans
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear

@@ -1,0 +1,85 @@
+package com.sctrcd.qzr.rules
+
+import org.joda.time.LocalDate
+import com.sctrcd.qzr.facts.*
+
+
+
+rule "Ask dateOfBirth"
+when
+    not Known(key == "dateOfBirth")
+then
+    insertLogical(new ValueQuestion("dateOfBirth", "What is your date of birth?"));
+end
+
+rule "Ask weight"
+when
+    not Known(key == "weight")
+then
+    insertLogical(new ValueQuestion("weight", "What is your weight in kilos?"));
+end
+
+rule "Ask gender"
+when
+    not Known(key == "gender")
+then
+    OptionQuestion q = new OptionQuestion("gender", "What is your gender?");
+    q.addOption("M", "Male");
+    q.addOption("F", "Female");
+    insertLogical(q);
+end
+
+rule "Ask resting heart rate"
+when
+    not Known(key == "restHr")
+then
+    insertLogical(new ValueQuestion("restHr", "What is your resting heart rate?"));
+end
+
+rule "Calculate age"
+when
+    $known: Known(key == "dateOfBirth")
+    $dob: LocalDate() from $known.value
+then
+    // $dob should be a Joda Time LocalDate
+    LocalDate today = new LocalDate();
+    Integer age = today.getYear() - $dob.getYear();
+    insertLogical(new Known<Integer>("age", age));
+end
+
+rule "Calculate best guess max HR"
+    activation-group "hr-max-calc"
+    salience 90 // less than the gender-adjusted calcs
+when
+    $knownAge: Known(key == "age", $age: value)
+    not Known(key == "gender")
+then
+    Integer age = (Integer) $age;
+    Integer hrMax = Double.valueOf(220 - age).intValue();
+    insertLogical(new Known<Integer>("hrMax", hrMax));
+end
+
+rule "Calculate male-adjusted max HR"
+    activation-group "hr-max-calc"
+    salience 100
+when
+    Known(key == "age", $age: value)
+    Known(key == "gender", value == "M")
+then
+    Integer age = (Integer) $age;
+    Integer hrMax = Double.valueOf(214 - (0.8 * age)).intValue();
+    insertLogical(new Known<Integer>("hrMax", hrMax));
+end
+
+rule "Calculate female-adjusted max HR"
+    activation-group "hr-max-calc"
+    salience 100
+when
+    Known(key == "age", $age: value)
+    Known(key == "gender", value == "F")
+then
+    Integer age = (Integer) $age;
+    Integer hrMax = Double.valueOf(209 - (0.9 * age)).intValue(); 
+    insertLogical(new Known<Integer>("hrMax", hrMax));
+end
+

@@ -1,0 +1,28 @@
+<div ng-controller="HealthQuizCtrl">
+
+	<div class="row">
+
+		<div class="col-sm-6">
+
+			<div class="panel panel-default" ng-repeat="question in questions">
+				<div class="panel-body">
+					{{question.question}} <input ng-model="question.answer"
+						class="pull-right" />						
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-sm-6">
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
