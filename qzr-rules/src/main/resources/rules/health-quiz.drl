@@ -3,8 +3,6 @@ package com.sctrcd.qzr.rules
 import org.joda.time.LocalDate
 import com.sctrcd.qzr.facts.*
 
-
-
 rule "Ask dateOfBirth"
 when
     not Known(key == "dateOfBirth")

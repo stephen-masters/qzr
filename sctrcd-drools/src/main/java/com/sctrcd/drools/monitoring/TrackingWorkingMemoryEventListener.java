@@ -8,8 +8,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.kie.api.event.rule.ObjectInsertedEvent;
 import org.kie.api.event.rule.ObjectDeletedEvent;
 import org.kie.api.event.rule.ObjectUpdatedEvent;
-import org.kie.api.event.rule.DefaultWorkingMemoryEventListener;
-import org.kie.api.event.rule.WorkingMemoryEvent;
+import org.kie.api.event.rule.RuleRuntimeEvent;
+import org.drools.core.event.DefaultRuleRuntimeEventListener;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +28,16 @@ import com.sctrcd.drools.DroolsUtil;
  * @author Stephen Masters
  */
 public class TrackingWorkingMemoryEventListener
-            extends DefaultWorkingMemoryEventListener {
+            extends DefaultRuleRuntimeEventListener {
 
     private static Logger log = LoggerFactory.getLogger(TrackingWorkingMemoryEventListener.class);
 
-    private List<WorkingMemoryEvent> allEvents = new ArrayList<WorkingMemoryEvent>();
-    private List<ObjectInsertedEvent> insertions = new ArrayList<ObjectInsertedEvent>();
-    private List<ObjectDeletedEvent> deletions = new ArrayList<ObjectDeletedEvent>();
-    private List<ObjectUpdatedEvent> updates = new ArrayList<ObjectUpdatedEvent>();
+    private List<RuleRuntimeEvent> allEvents = new ArrayList<>();
+    private List<ObjectInsertedEvent> insertions = new ArrayList<>();
+    private List<ObjectDeletedEvent> deletions = new ArrayList<>();
+    private List<ObjectUpdatedEvent> updates = new ArrayList<>();
 
-    private List<Map<String, Object>> factChanges = new ArrayList<Map<String,Object>>();
+    private List<Map<String, String>> factChanges = new ArrayList<>();
 
     private FactHandle handleFilter;
     private Class<?> classFilter;
@@ -88,7 +88,6 @@ public class TrackingWorkingMemoryEventListener
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void objectUpdated(final ObjectUpdatedEvent event) {
         if ((handleFilter == null  && classFilter == null) 
@@ -107,7 +106,7 @@ public class TrackingWorkingMemoryEventListener
         }
     }
 
-    public List<WorkingMemoryEvent> getAllEvents() {
+    public List<RuleRuntimeEvent> getAllEvents() {
         return allEvents;
     }
 
@@ -123,7 +122,7 @@ public class TrackingWorkingMemoryEventListener
         return updates;
     }
 
-    public List<Map<String, Object>> getFactChanges() {
+    public List<Map<String, String>> getFactChanges() {
         return factChanges;
     }
 

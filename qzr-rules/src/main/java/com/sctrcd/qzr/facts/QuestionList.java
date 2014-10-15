@@ -28,6 +28,11 @@ public class QuestionList {
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
+    
+    public void add(Question question) {
+        if (this.questions == null) this.questions = new ArrayList<>();
+        this.questions.add(question);
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder("QuestionList: { questions=[ ");

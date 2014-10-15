@@ -33,6 +33,7 @@ public abstract class Question {
     }
 
     public boolean equals(Object that) {
+        if (that == null) return false;
         if (that instanceof Question) {
             return this.key.equals(((Question)that).key);
         } else {

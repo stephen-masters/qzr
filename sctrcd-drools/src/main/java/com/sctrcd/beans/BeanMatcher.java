@@ -63,11 +63,13 @@ public class BeanMatcher {
      * If any filter is not in the bean properties or the value differs, then
      * this will return false.
      */
-    @SuppressWarnings("unchecked")
     public boolean matches(Object bean, Map<String, Object> filters) {
         if (filters.size() == 0) return true;
+        if (bean == null) return false;
         try {
-            return matches(BeanUtils.describe(bean), filters);
+            Map<String, String> described = BeanUtils.describe(bean);
+            log.debug(described.toString());
+            return matchesProperties(described, filters);
         } catch (IllegalAccessException e) {
             return false;
         } catch (InvocationTargetException e) {
@@ -82,7 +84,7 @@ public class BeanMatcher {
      * If any filter is not in the bean properties or the value differs, then
      * this will return false.
      */
-    public boolean matches(Map<String, Object> beanProperties, Map<String, Object> filters) {
+    public boolean matchesProperties(Map<String, String> beanProperties, Map<String, Object> filters) {
         if (filters.size() == 0) return true;
         if (log.isTraceEnabled()) {
             logComparison(beanProperties, filters);
@@ -103,7 +105,7 @@ public class BeanMatcher {
      * @param beanProperties The field names and their values for a bean.
      * @param filters The filters we are looking to match.
      */
-    private void logComparison(Map<String, Object> beanProperties, Map<String, Object> filters) {
+    private void logComparison(Map<String, String> beanProperties, Map<String, Object> filters) {
         StringBuilder filterValues = new StringBuilder();
         StringBuilder beanValues = new StringBuilder();
         

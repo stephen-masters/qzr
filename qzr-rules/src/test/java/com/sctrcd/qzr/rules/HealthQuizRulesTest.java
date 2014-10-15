@@ -8,6 +8,10 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.api.KieServices;
+import org.kie.api.event.rule.ObjectInsertedEvent;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +23,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.sctrcd.beans.BeanPropertyFilter;
+import com.sctrcd.drools.DroolsUtil;
 import com.sctrcd.drools.FactFinder;
 import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.drools.monitoring.TrackingAgendaEventListener;
 import com.sctrcd.drools.monitoring.TrackingWorkingMemoryEventListener;
-import com.sctrcd.drools.spring.DefaultKieSessionBean;
-import com.sctrcd.drools.spring.KieContainerBean;
-import com.sctrcd.drools.spring.KieServicesBean;
-import com.sctrcd.drools.spring.KieSessionBean;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
 import com.sctrcd.qzr.facts.ValueQuestion;
@@ -40,13 +41,13 @@ public class HealthQuizRulesTest {
 
     @Autowired
     @Qualifier("healthQuizKieServices")
-    private KieServicesBean kieServices;
+    private KieServices kieServices;
 
     @Autowired
     @Qualifier("healthQuizKieContainer")
-    private KieContainerBean kieContainer;
+    private KieContainer kieContainer;
 
-    private KieSessionBean kieSession;
+    private KieSession kieSession;
 
     private TrackingAgendaEventListener agendaEventListener;
     private TrackingWorkingMemoryEventListener workingMemoryEventListener;
@@ -59,7 +60,7 @@ public class HealthQuizRulesTest {
         if (kieSession != null) {
             kieSession.dispose();
         }
-        kieSession = new DefaultKieSessionBean(kieServices, kieContainer);
+        kieSession = kieContainer.newKieSession();
         
         agendaEventListener = new TrackingAgendaEventListener();
         workingMemoryEventListener = new TrackingWorkingMemoryEventListener();
@@ -76,6 +77,10 @@ public class HealthQuizRulesTest {
         assertNotNull(kieServices);
         assertNotNull(kieContainer);
         assertNotNull(kieSession);
+        
+        for (ObjectInsertedEvent ev : workingMemoryEventListener.getInsertions()) {
+            System.out.println(DroolsUtil.objectDetails(ev.getObject()));
+        }
     }
 
     @Test
@@ -88,7 +93,10 @@ public class HealthQuizRulesTest {
         assertEquals("Should ask date of birth if not known.", 1, questions.size());
         
         LocalDate dob = new LocalDate(1980, 06, 06); 
+        
+        @SuppressWarnings("unused")
         FactHandle dobFact = kieSession.insert(new Known<>("dateOfBirth", dob));
+        
         kieSession.fireAllRules();
 
         questions = valueQuestionFinder.findFacts(kieSession, 
@@ -102,11 +110,13 @@ public class HealthQuizRulesTest {
         LocalDate today = new LocalDate(kieSession.getSessionClock().getCurrentTime());
         LocalDate dob = today.minusYears(40);
         
+        @SuppressWarnings("unused")
         FactHandle ageFact = kieSession.insert(new Known<>("dateOfBirth", dob));
+        
         kieSession.fireAllRules();
         kieSession.getSessionClock().getCurrentTime();
         
-        assertTrue("Should infer age if date fo birth is known.", hasKnownValue("age", 40));
+        assertTrue("Should infer age if date of birth is known.", hasKnownValue("age", 40));
     }
     
     /**
@@ -139,7 +149,7 @@ public class HealthQuizRulesTest {
     private boolean hasKnownValue(String key, Object expected) {
         Collection<Known<?>> facts = knownFinder.findFacts(kieSession, new BeanPropertyFilter("key", key));
         assertEquals(1, facts.size());
-        Known known = facts.iterator().next();
+        Known<?> known = facts.iterator().next();
         log.debug("Found " + known);
         return expected.equals(known.getValue());
     }

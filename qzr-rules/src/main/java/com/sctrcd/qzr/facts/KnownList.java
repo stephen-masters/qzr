@@ -28,6 +28,11 @@ public class KnownList {
     public void setKnowns(List<Known<?>> knowns) {
         this.knowns = knowns;
     }
+    
+    public void add(Known<?> known) {
+        if (this.knowns == null) this.knowns = new ArrayList<>();
+        this.knowns.add(known);
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder("KnownList: { knowns=[ ");

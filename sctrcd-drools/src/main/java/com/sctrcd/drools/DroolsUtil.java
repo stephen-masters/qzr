@@ -159,7 +159,7 @@ public class DroolsUtil {
 
         try {
             @SuppressWarnings("unchecked")
-            Map<String, Object> objectProperties = BeanUtils.describe(o);
+            Map<String, String> objectProperties = BeanUtils.describe(o);
             for (String k : objectProperties.keySet()) {
                 sb.append(", " + k + "=\"" + objectProperties.get(k) + "\"");
             }
