@@ -1,15 +1,13 @@
 package com.sctrcd.qzr.facts;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashSet;
+import java.util.Set;
 
-@XmlRootElement(name = "question")
-public abstract class Question {
+public class Question {
 
-    private String key;
-    private String question;
-    
-    public Question() {
-    }
+    private final String key;
+    private final String question;
+    private final Set<Option> options = new HashSet<>();
     
     public Question(String key, String question) {
         this.key = key;
@@ -20,29 +18,24 @@ public abstract class Question {
         return key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getQuestion() {
         return question;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public boolean equals(Object that) {
-        if (that == null) return false;
-        if (that instanceof Question) {
-            return this.key.equals(((Question)that).key);
-        } else {
-            return false;
-        }
+    public Set<Option> getOptions() {
+        return options;
     }
     
+    public void addOption(Option option) {
+        this.options.add(option);
+    }
+    
+    public void addOption(String key, String value) {
+        addOption(new Option(key, value));
+    }
+
     public String toString() {
-        return "Question: { key=\"" + key + "\", question=\"" + question + "\" }";
+        return "Question: { key=\"" + key + "\", question=\"" + question + "\", options=[" + options + "] }";
     }
     
 }

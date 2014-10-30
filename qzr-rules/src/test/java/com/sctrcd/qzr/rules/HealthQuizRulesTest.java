@@ -28,9 +28,9 @@ import com.sctrcd.drools.FactFinder;
 import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.drools.monitoring.TrackingAgendaEventListener;
 import com.sctrcd.drools.monitoring.TrackingWorkingMemoryEventListener;
+import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
-import com.sctrcd.qzr.facts.ValueQuestion;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { HealthQuizKieConfig.class }, loader = AnnotationConfigContextLoader.class)
@@ -52,8 +52,9 @@ public class HealthQuizRulesTest {
     private TrackingAgendaEventListener agendaEventListener;
     private TrackingWorkingMemoryEventListener workingMemoryEventListener;
     
-    private FactFinder<Question> valueQuestionFinder = new FactFinder<>(ValueQuestion.class);
+    private FactFinder<Question> valueQuestionFinder = new FactFinder<>(Question.class);
     private FactFinder<Known<?>> knownFinder = new FactFinder<>(Known.class);
+    private FactFinder<HrMax> hrMaxFinder = new FactFinder<>(HrMax.class);
 
     @Before
     public void initialize() throws KieBuildException {
@@ -130,20 +131,20 @@ public class HealthQuizRulesTest {
         kieSession.fireAllRules();
         
         // Default = 220 - age
-        assertTrue("Should calculate default HR max if date of birth is known, but not gender.", hasKnownValue("hrMax", 180));
+        assertTrue("Should calculate default HR max if date of birth is known, but not gender.", hasHrMax(180));
         
         FactHandle male = kieSession.insert(new Known<>("gender", "M"));
         kieSession.fireAllRules();
         
         // Male-adjusted = 214 - (0.8 * age)
-        assertTrue("Should calculate male-adjusted HR max if date of birth is known and is male.", hasKnownValue("hrMax", 182));
+        assertTrue("Should calculate male-adjusted HR max if date of birth is known and is male.", hasHrMax(182));
         
         kieSession.delete(male);
         kieSession.insert(new Known<>("gender", "F"));
         kieSession.fireAllRules();
         
         // Female-adjusted = 209 - (0.9 * age)
-        assertTrue("Should calculate female-adjusted HR max if date of birth is known and is female.", hasKnownValue("hrMax", 173));
+        assertTrue("Should calculate female-adjusted HR max if date of birth is known and is female.", hasHrMax(173));
     }
 
     private boolean hasKnownValue(String key, Object expected) {
@@ -152,6 +153,14 @@ public class HealthQuizRulesTest {
         Known<?> known = facts.iterator().next();
         log.debug("Found " + known);
         return expected.equals(known.getValue());
+    }
+    
+    private boolean hasHrMax(Integer expected) {
+        Collection<HrMax> facts = hrMaxFinder.findFacts(kieSession);
+        assertEquals(1, facts.size());
+        HrMax hrMax = facts.iterator().next();
+        log.debug("Found " + hrMax);
+        return expected.equals(hrMax.getValue());
     }
     
 }

@@ -52,7 +52,7 @@
       <attribute value="jar:file:/Users/stevie/.m2/repository/org/slf4j/jcl-over-slf4j/1.7.7/jcl-over-slf4j-1.7.7-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/1.6.2/joda-time-1.6.2.jar" sourcepath="M2_REPO/joda-time/joda-time/1.6.2/joda-time-1.6.2-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.5/joda-time-2.5.jar" sourcepath="M2_REPO/joda-time/joda-time/2.5/joda-time-2.5-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/jul-to-slf4j/1.7.7/jul-to-slf4j-1.7.7.jar" sourcepath="M2_REPO/org/slf4j/jul-to-slf4j/1.7.7/jul-to-slf4j-1.7.7-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/stevie/.m2/repository/org/slf4j/jul-to-slf4j/1.7.7/jul-to-slf4j-1.7.7-javadoc.jar!/" name="javadoc_location"/>

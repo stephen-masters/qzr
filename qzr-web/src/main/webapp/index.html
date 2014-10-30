@@ -1,6 +1,12 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"><!--<![endif]-->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE; chrome=1" />
   <meta charset="utf-8">
   <style>
     [ng-cloak] {
@@ -8,7 +14,33 @@
     }
   </style>
   <script>
-    // include angular loader, which allows the files to load in any order
+
+    // When using console.log, IE will freeze unless the developer tools are open.
+    // This shim ensures that console.log doesn't break the application in IE.
+    // Avoid `console` errors in browsers that lack a console.
+    (function() {
+        var method;
+        var noop = function () {};
+        var methods = [
+            'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+            'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+            'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+            'timeStamp', 'trace', 'warn'
+        ];
+        var length = methods.length;
+        var console = (window.console = window.console || {});
+    
+        while (length--) {
+            method = methods[length];
+    
+            // Only stub undefined methods.
+            if (!console[method]) {
+                console[method] = noop;
+            }
+        }
+    }());
+  
+  // include angular loader, which allows the files to load in any order
     
 /*
  AngularJS v1.2.11
@@ -20,37 +52,41 @@
 "service"),value:a("$provide","value"),constant:a("$provide","constant","unshift"),animation:a("$animateProvider","register"),filter:a("$filterProvider","register"),controller:a("$controllerProvider","register"),directive:a("$compileProvider","directive"),config:k,run:function(a){h.push(a);return this}};f&&k(f);return g}())}}())})(window)})(window);
 //# sourceMappingURL=angular-loader.min.js.map
 
-    // include a third-party async loader library
     /*!
-     * $script.js v1.3
+     * $script.js JS loader & dependency manager 2.5.3
      * https://github.com/ded/script.js
-     * Copyright: @ded & @fat - Dustin Diaz, Jacob Thornton 2011
-     * Follow our software http://twitter.com/dedfat
-     * License: MIT
+     * (c) Dustin Diaz 2014 | License MIT
      */
-    !function(a,b,c){function t(a,c){var e=b.createElement("script"),f=j;e.onload=e.onerror=e[o]=function(){e[m]&&!/^c|loade/.test(e[m])||f||(e.onload=e[o]=null,f=1,c())},e.async=1,e.src=a,d.insertBefore(e,d.firstChild)}function q(a,b){p(a,function(a){return!b(a)})}var d=b.getElementsByTagName("head")[0],e={},f={},g={},h={},i="string",j=!1,k="push",l="DOMContentLoaded",m="readyState",n="addEventListener",o="onreadystatechange",p=function(a,b){for(var c=0,d=a.length;c<d;++c)if(!b(a[c]))return j;return 1};!b[m]&&b[n]&&(b[n](l,function r(){b.removeEventListener(l,r,j),b[m]="complete"},j),b[m]="loading");var s=function(a,b,d){function o(){if(!--m){e[l]=1,j&&j();for(var a in g)p(a.split("|"),n)&&!q(g[a],n)&&(g[a]=[])}}function n(a){return a.call?a():e[a]}a=a[k]?a:[a];var i=b&&b.call,j=i?b:d,l=i?a.join(""):b,m=a.length;c(function(){q(a,function(a){h[a]?(l&&(f[l]=1),o()):(h[a]=1,l&&(f[l]=1),t(s.path?s.path+a+".js":a,o))})},0);return s};s.get=t,s.ready=function(a,b,c){a=a[k]?a:[a];var d=[];!q(a,function(a){e[a]||d[k](a)})&&p(a,function(a){return e[a]})?b():!function(a){g[a]=g[a]||[],g[a][k](b),c&&c(d)}(a.join("|"));return s};var u=a.$script;s.noConflict=function(){a.$script=u;return this},typeof module!="undefined"&&module.exports?module.exports=s:a.$script=s}(this,document,setTimeout)
+    (function(e,t){typeof module!="undefined"&&module.exports?module.exports=t():typeof define=="function"&&define.amd?define(t):this[e]=t()})("$script",function(){function h(e,t){for(var n=0,i=e.length;n<i;++n)if(!t(e[n]))return r;return 1}function p(e,t){h(e,function(e){return!t(e)})}function d(e,t,n){function g(e){return e.call?e():u[e]}function y(){if(!--m){u[o]=1,s&&s();for(var e in f)h(e.split("|"),g)&&!p(f[e],g)&&(f[e]=[])}}e=e[i]?e:[e];var r=t&&t.call,s=r?t:n,o=r?e.join(""):t,m=e.length;return setTimeout(function(){p(e,function t(e,n){if(e===null)return y();e=!n&&!/^https?:\/\//.test(e)&&c?c+e+".js":e;if(l[e]){o&&(a[o]=1),l[e]==2?y():setTimeout(t.bind(null,e,!0),0);return}l[e]=1,o&&(a[o]=1),v(e,y)})},0),d}function v(n,r){var i=e.createElement("script"),u;i.onload=i.onerror=i[o]=function(){if(i[s]&&!/^c|loade/.test(i[s])||u)return;i.onload=i[o]=null,u=1,l[n]=2,r()},i.async=1,i.src=n,t.insertBefore(i,t.lastChild)}var e=document,t=e.getElementsByTagName("head")[0],n="string",r=!1,i="push",s="readyState",o="onreadystatechange",u={},a={},f={},l={},c;return d.get=v,d.order=function(e,t,n){(function r(i){i=e.shift(),e.length?d(i,r):d(i,t,n)})()},d.path=function(e){c=e},d.ready=function(e,t,n){e=e[i]?e:[e];var r=[];return!p(e,function(e){u[e]||r[i](e)})&&h(e,function(e){return u[e]})?t():!function(e){f[e]=f[e]||[],f[e][i](t),n&&n(r)}(e.join("|")),d},d.done=function(e){d([null],e)},d})
 
-    // load all of the dependencies asynchronously.
-    $script([
-      'lib/angular/angular.js',
-      'lib/angular/angular-route.js',
-      'lib/angular/angular-resource.js',
-      'lib/angular-ui/0.2.8/angular-ui-router-min.js',
-      'lib/jquery/1.10.2/jquery.js',
-      'lib/underscore/1.6.0/underscore-min.js',
-      'lib/moment.js/2.5.1/moment.min.js',
-      'bootstrap/3.1.0/js/bootstrap.min.js',
-      'js/app.js',
-      'js/services.js',
-      'js/controllers.js',
-      'js/filters.js',
-      'js/directives.js'
-    ], function() {
+    $script(['lib/jquery/1.10.2/jquery.js'], 'jquery')
+    $script(['lib/angular/angular.js'], 'angular')
+    
+    $script.ready(['jquery', 'angular'], function() {
+        $script([ 'lib/angular/angular-route.js',
+                  'lib/angular/angular-resource.js',
+                  'lib/angular/angular-sanitize.min.js',
+                  'lib/angular-ui/0.2.8/angular-ui-router-min.js',
+                  'lib/angular/ui-bootstrap-tpls-0.10.0.min.js',
+                  'lib/modernizr/2.7.1/modernizr-latest.js',
+                  'lib/underscore/1.6.0/underscore-min.js',
+                  'lib/moment.js/2.5.1/moment.min.js',
+                  'bootstrap/3.1.0/js/bootstrap.min.js',
+                  'lib/sockjs-0.3.4.js',
+                  'lib/stomp.js',
+                  'js/app.js',
+                  'js/services.js',
+                  'js/controllers.js',
+                  'js/filters.js',
+                  'js/directives.js'],
+                  'bundle')
+    })
+    
+    $script.ready('bundle', function() {
       // when all is done, execute bootstrap angular application
       angular.bootstrap(document, ['qzr']);
     });
   </script>
-  
   <title>Qzr</title>
   
   <link rel="stylesheet" href="bootstrap/3.1.0/css/bootstrap.css">
@@ -60,15 +96,9 @@
 <body ng-cloak>
 
     <div class="container" id="wrap">
-    
-        <nav class="navbar navbar-default" role="navigation">
-          <div class="collapse navbar-collapse">
-            <a class="navbar-brand" href="#">Health quiz</a>
-          </div>
-        </nav>
-        
+
         <div ng-view></div>
-    
+
     </div>
 
 </body>

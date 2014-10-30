@@ -6,22 +6,20 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 @XmlRootElement(name = "known")
-public class Known<T> {
+public class Answer {
 
     private String key;
-    private T value;
+    private String value;
     private DateTime when;
 
-    public Known() {
+    public Answer() {
     }
 
-    public Known(String key, T value) {
-        this.key = key;
-        this.value = value;
-        this.when = DateTime.now(DateTimeZone.UTC);
+    public Answer(String key, String value) {
+        this(key, value, DateTime.now(DateTimeZone.UTC));
     }
 
-    public Known(String key, T value, DateTime when) {
+    public Answer(String key, String value, DateTime when) {
         this.key = key;
         this.value = value;
         this.when = when;
@@ -35,11 +33,11 @@ public class Known<T> {
         this.key = key;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(String value) {
         this.value = value;
     }
     

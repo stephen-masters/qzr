@@ -59,7 +59,10 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
         answer : function(question) {
         	console.log("Answering : " + question.key + "=" + question.answer);
         	
-            $http.post('/api/quizzes/health/questions/' + question.key + '/answer', {'answer': question.answer})
+            $http.put('/api/quizzes/health/answers', {
+            	     key: question.key,
+                     answer: question.answer
+                 })
                  .success(svc.updateQuizState);
         }
 

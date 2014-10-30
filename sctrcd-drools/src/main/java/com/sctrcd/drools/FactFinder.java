@@ -54,5 +54,23 @@ public class FactFinder<T> {
         }
         return facts;
     }
+    
+    @SuppressWarnings("unchecked")
+    public Collection<T> findFacts(final KieSession session) {
+
+        ObjectFilter filter = new ObjectFilter() {
+            @Override
+            public boolean accept(Object object) {
+                return object.getClass().equals(classToFind);
+            }
+        };
+
+        Collection<FactHandle> factHandles = session.getFactHandles(filter);
+        Collection<T> facts = new ArrayList<T>();
+        for (FactHandle handle : factHandles) {
+            facts.add((T) session.getObject(handle));
+        }
+        return facts;
+    }
 
 }

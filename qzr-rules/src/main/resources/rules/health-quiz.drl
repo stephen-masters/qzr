@@ -3,45 +3,96 @@ package com.sctrcd.qzr.rules
 import org.joda.time.LocalDate
 import com.sctrcd.qzr.facts.*
 
+
+rule "Retract old answers"
+when
+    $oldAnswer: Answer()
+    $newAnswer: Answer(key == $oldAnswer.key, when > $oldAnswer.when)
+then
+    retract( $oldAnswer );
+end
+
+
 rule "Ask dateOfBirth"
 when
     not Known(key == "dateOfBirth")
 then
-    insertLogical(new ValueQuestion("dateOfBirth", "What is your date of birth?"));
+    insertLogical(new Question("dateOfBirth", "What is your date of birth?"));
 end
+
+rule "Learn date of birth"
+when
+    $answer: Answer(key == "dateOfBirth")
+then
+    insertLogical(new Known<>("dateOfBirth", LocalDate.parse($answer.getValue())));
+end
+
 
 rule "Ask weight"
 when
     not Known(key == "weight")
 then
-    insertLogical(new ValueQuestion("weight", "What is your weight in kilos?"));
+    insertLogical(new Question("weight", "What is your weight in kilos?"));
 end
+
+rule "Learn weight"
+when
+    $answer: Answer(key == "weight")
+then
+    insertLogical(new Known<>("weight", Integer.valueOf($answer.getValue())));
+end
+
 
 rule "Ask gender"
 when
     not Known(key == "gender")
 then
-    OptionQuestion q = new OptionQuestion("gender", "What is your gender?");
+    Question q = new Question("gender", "What is your gender?");
     q.addOption("M", "Male");
     q.addOption("F", "Female");
     insertLogical(q);
 end
 
+rule "Learn gender"
+when
+    $answer: Answer(key == "gender")
+then
+    insertLogical(new Known<>("gender", $answer.getValue()));
+end
+
+
 rule "Ask resting heart rate"
 when
     not Known(key == "restHr")
 then
-    insertLogical(new ValueQuestion("restHr", "What is your resting heart rate?"));
+    insertLogical(new Question("restHr", "What is your resting heart rate?"));
+end
+
+rule "Learn resting heart rate"
+when
+    $answer: Answer(key == "restHr")
+then
+    insertLogical(new Known<>("restHr", Integer.valueOf($answer.getValue())));
+end
+
+
+rule "Pick next question"
+    no-loop
+when
+    $q : Question()
+    not NextQuestion()
+then
+    insertLogical(new NextQuestion($q));
 end
 
 rule "Calculate age"
 when
     $known: Known(key == "dateOfBirth")
-    $dob: LocalDate() from $known.value
 then
+    LocalDate dob = (LocalDate) $known.getValue();
     // $dob should be a Joda Time LocalDate
     LocalDate today = new LocalDate();
-    Integer age = today.getYear() - $dob.getYear();
+    Integer age = today.getYear() - dob.getYear();
     insertLogical(new Known<Integer>("age", age));
 end
 
@@ -54,7 +105,7 @@ when
 then
     Integer age = (Integer) $age;
     Integer hrMax = Double.valueOf(220 - age).intValue();
-    insertLogical(new Known<Integer>("hrMax", hrMax));
+    insertLogical(new HrMax(hrMax, "Best guess"));
 end
 
 rule "Calculate male-adjusted max HR"
@@ -66,7 +117,7 @@ when
 then
     Integer age = (Integer) $age;
     Integer hrMax = Double.valueOf(214 - (0.8 * age)).intValue();
-    insertLogical(new Known<Integer>("hrMax", hrMax));
+    insertLogical(new HrMax(hrMax, "Male-adjusted"));
 end
 
 rule "Calculate female-adjusted max HR"
@@ -78,6 +129,12 @@ when
 then
     Integer age = (Integer) $age;
     Integer hrMax = Double.valueOf(209 - (0.9 * age)).intValue(); 
-    insertLogical(new Known<Integer>("hrMax", hrMax));
+    insertLogical(new HrMax(hrMax, "Female-adjusted"));
 end
 
+rule "Learn HR max"
+when
+    $hrMax: HrMax()
+then
+    insertLogical(new Known<Integer>("hrMax", $hrMax.getValue()));
+end

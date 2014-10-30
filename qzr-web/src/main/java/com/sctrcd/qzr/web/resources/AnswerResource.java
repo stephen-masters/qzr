@@ -1,30 +1,26 @@
-package com.sctrcd.qzr.facts;
+package com.sctrcd.qzr.web.resources;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.springframework.hateoas.ResourceSupport;
 
-@XmlRootElement(name = "known")
-public class Known<T> {
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.sctrcd.qzr.web.json.JsonJodaDateTimeSerializer;
+
+@XmlRootElement(name = "answer")
+public class AnswerResource extends ResourceSupport {
 
     private String key;
-    private T value;
+    private String value;
     private DateTime when;
 
-    public Known() {
+    public AnswerResource() {
     }
 
-    public Known(String key, T value) {
+    public AnswerResource(String key, String value) {
         this.key = key;
         this.value = value;
-        this.when = DateTime.now(DateTimeZone.UTC);
-    }
-
-    public Known(String key, T value, DateTime when) {
-        this.key = key;
-        this.value = value;
-        this.when = when;
     }
     
     public String getKey() {
@@ -35,14 +31,15 @@ public class Known<T> {
         this.key = key;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(String value) {
         this.value = value;
     }
-    
+
+    @JsonSerialize(using = JsonJodaDateTimeSerializer.class)
     public DateTime getWhen() {
         return when;
     }
@@ -50,7 +47,7 @@ public class Known<T> {
     public void setWhen(DateTime when) {
         this.when = when;
     }
-
+    
     public String toString() {
         return this.getClass().getSimpleName() 
                 + ": { key=\"" + key + "\", value=\"" + value + "\" }";
