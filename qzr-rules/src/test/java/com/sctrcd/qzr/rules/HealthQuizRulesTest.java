@@ -88,10 +88,13 @@ public class HealthQuizRulesTest {
     public void shouldAskDateOfBirthIfUnknown() {
         kieSession.fireAllRules();
 
-        Collection<Question> questions = valueQuestionFinder.findFacts(kieSession, 
+        Collection<Question> dateOfBirthQuestions = valueQuestionFinder.findFacts(kieSession, 
                 new BeanPropertyFilter("key", "dateOfBirth"));
+        
+        Collection<Question> allQuestions = valueQuestionFinder.findFacts(kieSession);
+        System.out.println("ALl questions: " + allQuestions);
 
-        assertEquals("Should ask date of birth if not known.", 1, questions.size());
+        assertEquals("Should ask date of birth if not known.", 1, dateOfBirthQuestions.size());
         
         LocalDate dob = new LocalDate(1980, 06, 06); 
         
@@ -100,10 +103,10 @@ public class HealthQuizRulesTest {
         
         kieSession.fireAllRules();
 
-        questions = valueQuestionFinder.findFacts(kieSession, 
+        dateOfBirthQuestions = valueQuestionFinder.findFacts(kieSession, 
                 new BeanPropertyFilter("key", "dateOfBirth"));
 
-        assertEquals("Should not ask date of birth if already known.", 0, questions.size());
+        assertEquals("Should not ask date of birth if already known.", 0, dateOfBirthQuestions.size());
     }
     
     @Test

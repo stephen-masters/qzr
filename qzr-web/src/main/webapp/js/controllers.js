@@ -8,23 +8,54 @@ qzrControllers.controller('HealthQuizCtrl', [
     '$scope', 'qzrSvc',
     function($scope, qzrSvc) {
 
-    	function updateQuestions() {
-    		$scope.questions = qzrSvc.model.questions;
-    		
-    		_.each($scope.questions, function(q) {
-    			$scope.$watch(q.key, function(newval, oldval) {
-    				console.log(q.key + ' : ' + newval + '/' + oldval);
-    			})
-    		});
-    	}
+    	$scope.$watch(
+    		function() { return qzrSvc.model.questions; },
+    		function(newVal, oldVal) { 
+    			$scope.questions = qzrSvc.model.questions; 
+    		},
+    		true
+    	);
     	
-    	$scope.answer = function(question) {
-    		qzrSvc.answer(question);
+    	$scope.$watch(
+    		function() { return qzrSvc.model.answers; },
+    		function(newVal, oldVal) { 
+    			$scope.answers = qzrSvc.model.answers; 
+    		},
+    		true
+    	);
+
+    	$scope.$watch(
+    		function() { return qzrSvc.model.hrmax; },
+    		function(newVal, oldVal) { 
+    			$scope.hrmax = qzrSvc.model.hrmax; 
+    		},
+    		true
+    	);
+
+		$scope.isAnswered = function(question) {
+			return question.answer != null;
+		};
+		$scope.isNotAnswered = function(question) {
+			return !$scope.isAnswered(question);
+		};
+
+		$scope.answer = function(question, answer) {
+			qzrSvc.answer(question, answer);
+		};
+
+		$scope.skip = function(question) {
+			qzrSvc.skip(question);
+		};
+		
+		$scope.retract = function(question) {
+			qzrSvc.retractAnswer(question);
+		};
+
+    	function init() {
+    		qzrSvc.loadQuestions();
     	}
-    	
-    	qzrSvc.onLoad(function() {
-    		updateQuestions();
-    	});
+
+    	init();
     	
 	}
 ]);

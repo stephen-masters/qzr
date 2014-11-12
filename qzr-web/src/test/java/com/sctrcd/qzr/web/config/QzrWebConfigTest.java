@@ -15,7 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.sctrcd.qzr.Qzr;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
-import com.sctrcd.qzr.services.HealthQuizServiceImpl;
+import com.sctrcd.qzr.services.HrMaxQuizServiceImpl;
 import com.sctrcd.qzr.services.QuizService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,12 +30,12 @@ public class QzrWebConfigTest {
     @Test
     public void shouldInjectBeans() {
         assertNotNull(healthQuizService);
-        healthQuizService.getQuestions();
+        healthQuizService.getNextQuestion();
     }
 
     @Test
     public void shouldRemoveQuestionWhenAnswered() {
-        Collection<Question> questions = healthQuizService.getQuestions();
+        Question question = healthQuizService.getNextQuestion();
         Collection<Known<?>> knowns = healthQuizService.getKnowns();
 
         // questions.contains(o)

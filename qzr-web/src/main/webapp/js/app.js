@@ -4,6 +4,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('qzr', [
   'ngRoute',
+  'ui.bootstrap',
   'qzr.filters',
   'qzr.services',
   'qzr.directives',

@@ -7,68 +7,51 @@ var qzrServices = angular.module('qzr.services', ['ngResource']);
 qzrServices.factory('qzrSvc', ['$http', function($http) { 
     
     var svc = {
-
-    	isLoaded: false,
     		
         model : {
             questions : [],
-            knowns : []
-        },
-        
-        load: function(callback) {
-            $http.get('/api/quizzes/health/questions').success(function(quizState) {
-            	if (quizState.questions) {
-            		svc.model.questions = quizState.questions;
-            	}
-            	if (quizState.knowns) {
-            		svc.model.knowns = quizState.knowns;
-            	}
-            	svc.notify();
-            });
-        },
-        
-        updateQuizState: function(quizState) {
-			_.each(quizState.questions, svc.addQuestion);
-			_.each(quizState.knowns, svc.addKnown);
-			svc.notify();
-        },
-        
-        addQuestion: function(newQuestion) {
-        	var found = _.find(svc.model.questions, function(question) { return question.key == newQuestion.key });
-        	if (!found) {
- 			   svc.model.questions.push(newQuestion);
-        	}
-        },
-        
-        addKnown: function(newKnown) {
-        	var found = _.find(svc.model.knowns, function(known) { return known.key == newKnown.key });
-        	if (!found) {
- 			   svc.model.knowns.push(newKnown);
-        	}
-        },
-         
-        onLoadCallbacks: [],
-        onLoad: function(callback) {
-        	if (!_.contains(svc.onLoadCallbacks, callback)) svc.onLoadCallbacks.push(callback);
+            knowns : [],
+            hrmax: null
         },
 
-        notify: function() {
-        	_.each(svc.onLoadCallbacks, function(callback) { callback.call(); })
+        loadQuestions: function(callback) {
+            $http.get('/api/quizzes/health/questions')
+	            .success(function(questions) {
+	            	svc.model.questions = questions;
+	            });
+	        $http.get('/api/quizzes/health/results/hrmax')
+	        	.success(function(hrmax) {
+	        		svc.model.hrmax = hrmax;
+	        	})
+	        	.error(function() {
+	        		svc.model.hrmax = null;
+	        	});
         },
-        
-        answer : function(question) {
-        	console.log("Answering : " + question.key + "=" + question.answer);
+
+		answer : function(question, answerValue) {
+        	console.log("Answering : " + question.key + "=" + answerValue);
         	
-            $http.put('/api/quizzes/health/answers', {
-            	     key: question.key,
-                     answer: question.answer
-                 })
-                 .success(svc.updateQuizState);
-        }
+        	var answer = { key: question.key, value: answerValue };
+            
+            $http.put('/api/quizzes/health/questions/' + question.key + '/answer', answer)
+                 .success(svc.loadQuestions);
+        },
+
+        skip : function(question) {
+        	console.log("Skipping : " + question.key);
+        	
+            $http.post('/api/quizzes/health/questions/' + question.key + '/skip')
+                 .success(svc.loadQuestions);
+        },
+
+        retractAnswer : function(question) {
+        	console.log("Retracting : " + question.key);
+        	
+            $http.delete('/api/quizzes/health/questions/' + question.key + '/answer')
+                 .success(svc.loadQuestions);
+        } 
 
     };
-    
-    svc.load();
     
     return svc;
     

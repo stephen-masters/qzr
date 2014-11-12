@@ -10,8 +10,9 @@ public class Answer {
 
     private String key;
     private String value;
+    private Question question;
     private DateTime when;
-
+    
     public Answer() {
     }
 
@@ -20,6 +21,12 @@ public class Answer {
     }
 
     public Answer(String key, String value, DateTime when) {
+        this.key = key;
+        this.value = value;
+        this.when = when;
+    }
+    
+    public Answer(String key, String value, Question question, DateTime when) {
         this.key = key;
         this.value = value;
         this.when = when;
@@ -41,6 +48,14 @@ public class Answer {
         this.value = value;
     }
     
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
     public DateTime getWhen() {
         return when;
     }

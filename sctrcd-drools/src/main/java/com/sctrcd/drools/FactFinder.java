@@ -3,6 +3,7 @@ package com.sctrcd.drools;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.ObjectFilter;
@@ -37,7 +38,7 @@ public class FactFinder<T> {
      * @throws NoSuchMethodException
      */
     @SuppressWarnings("unchecked")
-    public Collection<T> findFacts(final KieSession session, final BeanPropertyFilter... expectedProperties) {
+    public List<T> findFacts(final KieSession session, final BeanPropertyFilter... expectedProperties) {
 
         ObjectFilter filter = new ObjectFilter() {
             @Override
@@ -48,7 +49,7 @@ public class FactFinder<T> {
         };
 
         Collection<FactHandle> factHandles = session.getFactHandles(filter);
-        Collection<T> facts = new ArrayList<T>();
+        List<T> facts = new ArrayList<T>();
         for (FactHandle handle : factHandles) {
             facts.add((T) session.getObject(handle));
         }
@@ -56,7 +57,7 @@ public class FactFinder<T> {
     }
     
     @SuppressWarnings("unchecked")
-    public Collection<T> findFacts(final KieSession session) {
+    public List<T> findFacts(final KieSession session) {
 
         ObjectFilter filter = new ObjectFilter() {
             @Override
@@ -66,11 +67,27 @@ public class FactFinder<T> {
         };
 
         Collection<FactHandle> factHandles = session.getFactHandles(filter);
-        Collection<T> facts = new ArrayList<T>();
+        List<T> facts = new ArrayList<T>();
         for (FactHandle handle : factHandles) {
             facts.add((T) session.getObject(handle));
         }
         return facts;
+    }
+    
+    public void deleteFacts(final KieSession session, final BeanPropertyFilter... expectedProperties) {
+
+        ObjectFilter filter = new ObjectFilter() {
+            @Override
+            public boolean accept(Object object) {
+                return object.getClass().equals(classToFind) 
+                        && beanMatcher.matches(object, expectedProperties);
+            }
+        };
+
+        Collection<FactHandle> factHandles = session.getFactHandles(filter);
+        for (FactHandle handle : factHandles) {
+            session.delete(handle);
+        }
     }
 
 }

@@ -121,9 +121,9 @@
       <attribute value="jar:file:/Users/stevie/.m2/repository/org/yaml/snakeyaml/1.13/snakeyaml-1.13-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.5/joda-time-2.5.jar" sourcepath="M2_REPO/joda-time/joda-time/2.5/joda-time-2.5-sources.jar">
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.3/joda-time-2.3.jar" sourcepath="M2_REPO/joda-time/joda-time/2.3/joda-time-2.3-sources.jar">
     <attributes>
-      <attribute value="jar:file:/Users/stevie/.m2/repository/joda-time/joda-time/2.5/joda-time-2.5-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/stevie/.m2/repository/joda-time/joda-time/2.3/joda-time-2.3-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/springframework/boot/spring-boot-starter-web/1.1.6.RELEASE/spring-boot-starter-web-1.1.6.RELEASE.jar"/>
@@ -177,5 +177,10 @@
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/springframework/hateoas/spring-hateoas/0.16.0.RELEASE/spring-hateoas-0.16.0.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.3.4/jackson-datatype-joda-2.3.4.jar" sourcepath="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.3.4/jackson-datatype-joda-2.3.4-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/stevie/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.3.4/jackson-datatype-joda-2.3.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.8.4/mockito-all-1.8.4.jar" sourcepath="M2_REPO/org/mockito/mockito-all/1.8.4/mockito-all-1.8.4-sources.jar"/>
 </classpath>

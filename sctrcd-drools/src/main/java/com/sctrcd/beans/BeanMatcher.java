@@ -173,6 +173,7 @@ public class BeanMatcher {
     protected boolean isEquivalent(Object o1, Object o2) {
         log.trace("    matching: " + o1 + " and " + o2);
         if (o1 == null && o2 == null) return true;
+        if (o1 == null && o2 != null || o1 != null && o2 == null) return false;
         if (o1 == o2) return true;
         if (o1.toString().equals(o2.toString())) return true;
         return false;

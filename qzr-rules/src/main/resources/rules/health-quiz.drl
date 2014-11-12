@@ -13,43 +13,67 @@ then
 end
 
 
+// By binding an answer to the question it is answering, we can retract a question 
+// once answered, but still be able to get its details via the answer in working memory.
+//
+rule "Bind question to answer"
+    salience 10
+when
+    $answer: Answer(question == null)
+    $question: Question(key == $answer.key)
+then
+    $answer.setQuestion($question);
+    $question.setAnswer($answer);
+    update($answer);
+    update($question);
+end
+
+
+// If an answer can't be parsed, then it will be retracted from working memory.
+// Unfortunately it will still be referenced by the question if we don't unbind it.
+//
+rule "Unbind answer from question"
+when
+    $question: Question($key: key, answer != null)
+    not Answer(key == $key)
+then
+    $question.setAnswer(null);
+    update($question);
+end
+
+
 rule "Ask dateOfBirth"
+    activation-group "questions"
 when
     not Known(key == "dateOfBirth")
 then
-    insertLogical(new Question("dateOfBirth", "What is your date of birth?"));
+    insertLogical(new Question("dateOfBirth", "What is your date of birth?", AnswerType.LOCAL_DATE));
 end
 
 rule "Learn date of birth"
 when
     $answer: Answer(key == "dateOfBirth")
 then
-    insertLogical(new Known<>("dateOfBirth", LocalDate.parse($answer.getValue())));
-end
-
-
-rule "Ask weight"
-when
-    not Known(key == "weight")
-then
-    insertLogical(new Question("weight", "What is your weight in kilos?"));
-end
-
-rule "Learn weight"
-when
-    $answer: Answer(key == "weight")
-then
-    insertLogical(new Known<>("weight", Integer.valueOf($answer.getValue())));
+    try {
+        LocalDate dob = LocalDate.parse($answer.getValue());
+        insertLogical(new Known<>("dateOfBirth", dob));
+    } catch (Exception ex) {
+        System.out.println("Answer not valid. Deleting it...");
+        delete( $answer );
+    }
 end
 
 
 rule "Ask gender"
+    activation-group "questions"
 when
+    Known(key == "dateOfBirth")
     not Known(key == "gender")
 then
     Question q = new Question("gender", "What is your gender?");
     q.addOption("M", "Male");
     q.addOption("F", "Female");
+    q.addOption("U", "Undisclosed");
     insertLogical(q);
 end
 
@@ -60,30 +84,6 @@ then
     insertLogical(new Known<>("gender", $answer.getValue()));
 end
 
-
-rule "Ask resting heart rate"
-when
-    not Known(key == "restHr")
-then
-    insertLogical(new Question("restHr", "What is your resting heart rate?"));
-end
-
-rule "Learn resting heart rate"
-when
-    $answer: Answer(key == "restHr")
-then
-    insertLogical(new Known<>("restHr", Integer.valueOf($answer.getValue())));
-end
-
-
-rule "Pick next question"
-    no-loop
-when
-    $q : Question()
-    not NextQuestion()
-then
-    insertLogical(new NextQuestion($q));
-end
 
 rule "Calculate age"
 when
@@ -136,5 +136,7 @@ rule "Learn HR max"
 when
     $hrMax: HrMax()
 then
-    insertLogical(new Known<Integer>("hrMax", $hrMax.getValue()));
+    insertLogical(new Known("hrMax", $hrMax.getValue()));
 end
+
+

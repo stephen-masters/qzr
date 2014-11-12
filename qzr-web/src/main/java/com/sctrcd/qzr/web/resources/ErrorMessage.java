@@ -1,52 +1,45 @@
 package com.sctrcd.qzr.web.resources;
 
-import javax.xml.bind.annotation.XmlElement;
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-/**
- * An error message, which will be returned to the client formatted as JSON/XML.
- * 
- * @author Stephen Masters
- */
 @XmlRootElement(name = "error")
-public class ErrorMessage {
+public class ErrorMessage implements Serializable {
 
-    private Throwable exception;
+    private static final long serialVersionUID = 1L;
+
+    private String code;
     private String message;
-
-    public ErrorMessage() {
-        this.message = "";
-    }
-
-    public ErrorMessage(String message) {
+    
+    public ErrorMessage(String code, String message) {
+        this.code = code;
         this.message = message;
     }
-
-    public ErrorMessage(Throwable exception) {
-        this.exception = exception;
-        this.message = exception.getLocalizedMessage();
+    
+    public ErrorMessage(QuizException ex) {
+        this.code = ex.getCode();
+        this.message = ex.getMessage();
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Throwable getException() {
-        return exception;
+    public String getCode() {
+        return code;
     }
 
-    public void setException(Throwable exception) {
-        this.exception = exception;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    @XmlElement(name = "message")
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String toString() {
+        return "Error [" + code + "]:" + getMessage();
     }
 
 }

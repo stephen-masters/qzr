@@ -9,24 +9,24 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Stephen Masters
  */
 @ResponseStatus(value = org.springframework.http.HttpStatus.NOT_FOUND, reason = "Resource not found.")
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends QuizException {
 
     private static final long serialVersionUID = 1L;
-
+    
     public NotFoundException() {
-        super("Resource not found.");
+        this("NOT_FOUND", "Resource not found.");
     }
     
     public NotFoundException(String message) {
-        super(message);
+        this("NOT_FOUND", message);
     }
     
-    public NotFoundException(Throwable cause) {
-        super(cause);
+    public NotFoundException(String code, String message) {
+        super(code, message);
     }
     
-    public NotFoundException(String message, Throwable cause) {
-        super(message);
+    public NotFoundException(String code, String message, Throwable cause) {
+        super(code, message, cause);
     }
     
 }

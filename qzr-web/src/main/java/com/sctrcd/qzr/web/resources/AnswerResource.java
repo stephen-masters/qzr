@@ -47,7 +47,7 @@ public class AnswerResource extends ResourceSupport {
     public void setWhen(DateTime when) {
         this.when = when;
     }
-    
+
     public String toString() {
         return this.getClass().getSimpleName() 
                 + ": { key=\"" + key + "\", value=\"" + value + "\" }";
