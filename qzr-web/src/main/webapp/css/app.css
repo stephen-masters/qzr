@@ -29,15 +29,6 @@
   padding: 0;
 }
 
-.client-reporting-request-list-nav {
-    max-height: 400px;
-    overflow-y:scroll;
-}
-
-.nino {
-	font-family: "lucida console", monospace;
-}
-
 a.clickable:hover {
 	cursor: pointer;
 	cursor: hand;
