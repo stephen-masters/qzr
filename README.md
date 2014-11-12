@@ -19,5 +19,5 @@ I have set this up with a Maven build and it also requires Java 8. So `cd` into 
 
 For convenience, there's a script called `run.sh` in the root of the project, which fires off the Java portion of that command line.
 
-Once it's running, you can open point a browser at http://127.0.0.1:40080/ to see the site working.
+Once it's running, you can point a browser at http://127.0.0.1:40080/ to see the site working.
 
