@@ -5,6 +5,7 @@ target
 *.settings
 *.springBeans
 *.class
+*.classpath
 
 # Package Files #
 *.jar
