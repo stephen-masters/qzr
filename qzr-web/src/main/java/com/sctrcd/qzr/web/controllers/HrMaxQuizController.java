@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sctrcd.qzr.facts.Answer;
 import com.sctrcd.qzr.facts.HrMax;
+import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.KnownList;
 import com.sctrcd.qzr.facts.Question;
 import com.sctrcd.qzr.services.QuizService;
@@ -111,8 +112,7 @@ public class HrMaxQuizController {
 
         log.debug("Answer to question [" + key + "]: " + answer.getValue());
 
-        if (answer.getKey() == null || "".equals(answer.getKey()) 
-                || answer.getValue() == null || "".equals(answer.getValue())) {
+        if (answer.getValue() == null || "".equals(answer.getValue())) {
             throw new BadRequestException("Not a valid answer.");
         } 
         
@@ -125,25 +125,16 @@ public class HrMaxQuizController {
         return new ResponseEntity<>(answerResource, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/questions/{key}/skip", method = RequestMethod.PUT)
-    public HttpEntity<AnswerResource> skip(
-            @PathVariable(value = "key") String key, 
-            @RequestBody(required = true) AnswerResource answer) throws BadRequestException {
+    @RequestMapping(value = "/questions/{key}/skip", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void skip(
+            @PathVariable(value = "key") String key) throws BadRequestException {
 
-        log.debug("Answer to question [" + key + "]: " + answer.getValue());
-
-        if (answer.getKey() == null || "".equals(answer.getKey()) 
-                || answer.getValue() == null || "".equals(answer.getValue())) {
-            throw new BadRequestException("Not a valid answer.");
-        } 
+        log.debug("Skipping question [" + key + "].");
         
-        Answer fact = new Answer(key, answer.getValue());
+        Answer fact = new Answer(key, null);
         
-        fact = svc.answer(fact);
-
-        AnswerResource answerResource = answerAssembler.toResource(fact);
-
-        return new ResponseEntity<>(answerResource, HttpStatus.OK);
+        svc.answer(fact);
     }
     
     @RequestMapping(value = "/questions/{key}/answer", method = RequestMethod.GET, produces = "application/json")
@@ -168,8 +159,8 @@ public class HrMaxQuizController {
     }
 
     @RequestMapping(value = "/knowns", method = RequestMethod.GET, produces = "application/json")
-    public KnownList getKnowns() {
-        KnownList knowns = new KnownList(svc.getKnowns());
+    public Collection<Known<?>> getKnowns() {
+        Collection<Known<?>> knowns = svc.getKnowns();
 
         log.debug("Knowns: " + knowns);
 

@@ -12,11 +12,11 @@ angular.module('qzr', [
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.
-  when('/quizzes/health', {
-	  templateUrl: 'partials/health-quiz.html', 
-	  controller: 'HealthQuizCtrl'
+  when('/quizzes/hrmax', {
+	  templateUrl: 'partials/hrmax-quiz.html', 
+	  controller: 'HrMaxQuizCtrl'
   }).
   otherwise({
-	  redirectTo: '/quizzes/health'
+	  redirectTo: '/quizzes/hrmax'
   });
 }]);

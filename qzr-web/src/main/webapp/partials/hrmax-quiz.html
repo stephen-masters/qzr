@@ -1,0 +1,96 @@
+<div ng-controller="HrMaxQuizCtrl">
+
+	<div class="col-md-4">
+
+		<div class="panel panel-default">
+			<div class="panel-heading">New questions</div>
+			<div class="panel-body" ng-show="(questions | filter:isNotAnswered).length==0">
+				<p>No more questions</p>
+			</div>
+			<div class="panel-body" ng-repeat="question in questions | filter:isNotAnswered">
+				<p>{{question.text}}</p>
+				<div ng-show="question.answerType=='STRING'">
+					<div class="row">
+						<div class="col-sm-9">
+							<p class="input-group">
+								<select ng-model="newAnswer" ng-options="opt.text for opt in question.options">
+								<option value="">--- choose ---</option>
+								</select>
+							</p>
+						</div>
+					</div>
+					<button class="btn btn-default" ng-click="skip(question)">
+						Skip
+					</button>
+					<button class="btn btn-default" ng-click="answer(question, newAnswer.key)">
+						Answer
+					</button>
+				</div>
+				<div ng-show="question.answerType=='LOCAL_DATE'">
+					<div class="row">
+						<div class="col-sm-9">
+							<p class="input-group">
+								<input type="text" class="form-control" ng-model="newAnswer" />
+							</p>
+						</div>
+					</div>
+					<button class="btn btn-default" ng-click="skip(question)">
+						Skip
+					</button>
+					<button class="btn btn-default" ng-click="answer(question, newAnswer)">
+						Answer
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default" ng-show="(questions | filter:isAnswered).length > 0">
+			<div class="panel-heading">Answers</div>
+			<div class="panel-body" ng-repeat="question in questions | filter:isAnswered">
+				<p>{{question.text}}</p>
+				<p ng-if="question.answer.value != null">{{question.answer.value}}</p>
+				<p ng-if="question.answer.value == null">Skipped</p>
+				<button type="button" class="btn btn-default" ng-click="retract(question)">
+					Retract
+				</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="col-md-4">
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-heading">HR Max</div>
+				<div class="panel-body" ng-if="hrmax != null">
+					{{hrmax.value}} ({{hrmax.algorithm}})
+				</div>
+				<div class="panel-body" ng-if="hrmax == null">
+					Unknown
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="panel panel-default" ng-show="knowns.length > 0">
+				<div class="panel-heading">Knowns</div>
+				<div class="panel-body">
+					<ul class="rules">
+						<li ng-repeat="known in knowns">{{known.key}} - {{known.value}}</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="panel panel-default" ng-show="(events).length > 0">
+			<div class="panel-heading">Rule matches</div>
+			<div class="panel-body">
+				<ul class="rules">
+					<li ng-repeat="event in events.slice().reverse()">{{event.name}}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+</div>

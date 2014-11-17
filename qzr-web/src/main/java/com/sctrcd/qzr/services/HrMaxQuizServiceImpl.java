@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.sctrcd.beans.BeanPropertyFilter;
@@ -31,6 +32,7 @@ public class HrMaxQuizServiceImpl implements QuizService {
             
     public KieSession kieSession;
     
+    private PublishingAgendaEventListener agendaEventPublisher;
     private TrackingAgendaEventListener agendaEventListener;
     private TrackingWorkingMemoryEventListener workingMemoryEventListener;
     
@@ -41,19 +43,22 @@ public class HrMaxQuizServiceImpl implements QuizService {
     
     @Autowired
     public HrMaxQuizServiceImpl(
-            @Qualifier("healthQuizKieContainer") KieContainer kieContainer) {
+            @Qualifier("healthQuizKieContainer") KieContainer kieContainer,
+            PublishingAgendaEventListener agendaEventPublisher) {
         
         log.info("Initialising a new quiz session.");
         
-        kieSession = kieContainer.newKieSession();
+        this.kieSession = kieContainer.newKieSession();
         
-        agendaEventListener = new TrackingAgendaEventListener();
-        workingMemoryEventListener = new TrackingWorkingMemoryEventListener();
+        this.agendaEventPublisher = agendaEventPublisher;
+        this.agendaEventListener = new TrackingAgendaEventListener();
+        this.workingMemoryEventListener = new TrackingWorkingMemoryEventListener();
 
-        kieSession.addEventListener(agendaEventListener);
-        kieSession.addEventListener(workingMemoryEventListener);
+        this.kieSession.addEventListener(agendaEventPublisher);
+        this.kieSession.addEventListener(agendaEventListener);
+        this.kieSession.addEventListener(workingMemoryEventListener);
         
-        kieSession.fireAllRules();
+        this.kieSession.fireAllRules();
     }
 
     @Override

@@ -26,7 +26,9 @@ public class AnswerResourceAssembler extends ResourceAssemblerSupport<Answer, An
         AnswerResource resource = createResourceWithId("questions/" + answer.getKey() + "/answer", answer);
 
         resource.setKey(answer.getKey());
-        resource.setValue(answer.getValue().toString());
+        if (answer.getValue() != null) { 
+            resource.setValue(answer.getValue().toString());
+        }
         resource.setWhen(answer.getWhen());
 
         if (answer.getQuestion() != null) {

@@ -4,9 +4,17 @@
 
 var qzrControllers = angular.module('qzr.controllers', []);
 
-qzrControllers.controller('HealthQuizCtrl', [
+qzrControllers.controller('HrMaxQuizCtrl', [
     '$scope', 'qzrSvc',
     function($scope, qzrSvc) {
+
+    	$scope.$watch(
+    		function() { return qzrSvc.model.events; },
+    		function(newVal, oldVal) { 
+    			$scope.events = qzrSvc.model.events; 
+    		},
+    		true
+    	);
 
     	$scope.$watch(
     		function() { return qzrSvc.model.questions; },
@@ -20,6 +28,14 @@ qzrControllers.controller('HealthQuizCtrl', [
     		function() { return qzrSvc.model.answers; },
     		function(newVal, oldVal) { 
     			$scope.answers = qzrSvc.model.answers; 
+    		},
+    		true
+    	);
+
+    	$scope.$watch(
+    		function() { return qzrSvc.model.knowns; },
+    		function(newVal, oldVal) { 
+    			$scope.knowns = qzrSvc.model.knowns; 
     		},
     		true
     	);
@@ -51,8 +67,15 @@ qzrControllers.controller('HealthQuizCtrl', [
 			qzrSvc.retractAnswer(question);
 		};
 
-    	function init() {
+		function onEvent(event) {
+			if ($scope.events == null) $scope.events = [];
+			$scope.events.push(event);
+		}
+
+		function init() {
     		qzrSvc.loadQuestions();
+    		if (!qzrSvc.connected) qzrSvc.connect();
+    		qzrSvc.onEvent(onEvent);
     	}
 
     	init();
