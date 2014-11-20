@@ -9,10 +9,8 @@ import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.sctrcd.beans.BeanPropertyFilter;
@@ -60,12 +58,12 @@ public class HrMaxQuizServiceImpl implements QuizService {
     
     @Autowired
     public HrMaxQuizServiceImpl(
-            @Qualifier("healthQuizKieContainer") KieContainer kieContainer,
+            KieContainer kieContainer,
             PublishingAgendaEventListener agendaEventPublisher) {
         
         log.info("Initialising a new quiz session.");
         
-        this.kieSession = kieContainer.newKieSession();
+        this.kieSession = kieContainer.newKieSession("HrmaxSession");
         
         this.agendaEventPublisher = agendaEventPublisher;
         this.agendaEventListener = new TrackingAgendaEventListener();

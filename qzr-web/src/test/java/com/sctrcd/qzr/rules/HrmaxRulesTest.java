@@ -16,11 +16,8 @@ import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.sctrcd.beans.BeanPropertyFilter;
 import com.sctrcd.drools.DroolsUtil;
@@ -28,6 +25,7 @@ import com.sctrcd.drools.FactFinder;
 import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.drools.monitoring.TrackingAgendaEventListener;
 import com.sctrcd.drools.monitoring.TrackingWorkingMemoryEventListener;
+import com.sctrcd.qzr.Qzr;
 import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
@@ -38,20 +36,17 @@ import com.sctrcd.qzr.facts.Question;
  * @author Stephen Masters
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { HealthQuizKieConfig.class }, loader = AnnotationConfigContextLoader.class)
-@ActiveProfiles({ "drools" })
-public class HealthQuizRulesTest {
+@SpringApplicationConfiguration(classes = Qzr.class)
+public class HrmaxRulesTest {
 
-    private static Logger log = LoggerFactory.getLogger(HealthQuizRulesTest.class);
+    private static Logger log = LoggerFactory.getLogger(HrmaxRulesTest.class);
 
     @Autowired
-    @Qualifier("healthQuizKieServices")
     private KieServices kieServices;
 
     @Autowired
-    @Qualifier("healthQuizKieContainer")
     private KieContainer kieContainer;
-
+    
     private KieSession kieSession;
 
     private TrackingAgendaEventListener agendaEventListener;
@@ -74,7 +69,8 @@ public class HealthQuizRulesTest {
         if (kieSession != null) {
             kieSession.dispose();
         }
-        kieSession = kieContainer.newKieSession();
+
+        this.kieSession = kieContainer.newKieSession("HrmaxSession");
         
         agendaEventListener = new TrackingAgendaEventListener();
         workingMemoryEventListener = new TrackingWorkingMemoryEventListener();
@@ -88,8 +84,6 @@ public class HealthQuizRulesTest {
      */
     @Test
     public void shouldConfigureDroolsComponents() {
-        assertNotNull(kieServices);
-        assertNotNull(kieContainer);
         assertNotNull(kieSession);
         
         for (ObjectInsertedEvent ev : workingMemoryEventListener.getInsertions()) {

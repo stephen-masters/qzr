@@ -1,4 +1,4 @@
-package com.sctrcd.qzr.rules
+package com.sctrcd.qzr.hrmax
 
 import org.joda.time.LocalDate
 import com.sctrcd.qzr.facts.*

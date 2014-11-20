@@ -14,10 +14,8 @@ import org.kie.api.runtime.KieSession;
 import org.kie.internal.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import com.sctrcd.drools.DroolsResource;
 import com.sctrcd.drools.KieBuildException;
@@ -25,15 +23,20 @@ import com.sctrcd.drools.ResourcePathType;
 
 /**
  * This is a configuration class, which will set up Spring beans for a Drools
- * {@link KieServices} and a {@link KieContainer}.
+ * {@link KieServices} and a {@link KieContainer}. Note that it does not use the
+ * classpath/convention-based KieServices. Instead it builds up a
+ * {@link KieFileSystem} the 'hard' way. This is because, when testing it's
+ * quite handy to be able to inspect the results of loading a set of rules.
+ * Also, it seems to be the case, that the classpath loader does not pick up
+ * rules from the current project. Only those that have been bundled into a JAR.
+ * That tends to make it tricky to test rules, except in downstream projects.
  * 
  * @author Stephen Masters
  */
 @Configuration
-@Profile("drools")
-public class HealthQuizKieConfig {
+public class HrmaxRulesTestConfig {
 
-    private static Logger log = LoggerFactory.getLogger(HealthQuizKieConfig.class);
+    private static Logger log = LoggerFactory.getLogger(HrmaxRulesTestConfig.class);
     
     /**
      * Spring Bean providing a {@link KieServices} instance which among other
@@ -46,14 +49,14 @@ public class HealthQuizKieConfig {
      * @throws KieBuildException
      *             If there are compilation errors in the rules.
      */
-    @Bean(name = "healthQuizKieServices")
+    @Bean(name = "kieServices")
     public KieServices kieServices() throws KieBuildException {
         
         KieServices kieServices = KieServices.Factory.get();
         KieFileSystem kfs = kieServices.newKieFileSystem();
         
         DroolsResource[] resources = new DroolsResource[]{ 
-                new DroolsResource("rules/health-quiz.drl", 
+                new DroolsResource("com/sctrcd/qzr/hrmax/hrmax.drl", 
                         ResourcePathType.CLASSPATH, 
                         ResourceType.DRL)};
         
@@ -71,9 +74,8 @@ public class HealthQuizKieConfig {
      *            The {@link KieServices} bean.
      * @return A {@link KieContainer}.
      */
-    @Bean(name = "healthQuizKieContainer")
-    public KieContainer kieContainer(
-            @Qualifier("healthQuizKieServices") KieServices kieServices) {
+    @Bean(name = "kieContainer")
+    public KieContainer kieContainer(KieServices kieServices) {
         
         KieContainer bean = kieServices.newKieContainer(
                 kieServices.getRepository().getDefaultReleaseId());

@@ -62,6 +62,12 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-maven-plugin</artifactId>
+				<version>6.0.0.CR5</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>

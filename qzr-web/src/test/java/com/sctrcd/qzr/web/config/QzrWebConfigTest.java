@@ -21,7 +21,7 @@ import com.sctrcd.qzr.services.QuizService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Qzr.class)
 @WebAppConfiguration
-@ActiveProfiles({ "scratch", "drools" })
+@ActiveProfiles({ "scratch" })
 public class QzrWebConfigTest {
 
     @Autowired
