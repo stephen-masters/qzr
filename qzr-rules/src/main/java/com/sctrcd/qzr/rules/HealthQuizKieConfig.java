@@ -13,7 +13,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.internal.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,12 +22,29 @@ import com.sctrcd.drools.DroolsResource;
 import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.drools.ResourcePathType;
 
+/**
+ * This is a configuration class, which will set up Spring beans for a Drools
+ * {@link KieServices} and a {@link KieContainer}.
+ * 
+ * @author Stephen Masters
+ */
 @Configuration
 @Profile("drools")
 public class HealthQuizKieConfig {
 
     private static Logger log = LoggerFactory.getLogger(HealthQuizKieConfig.class);
     
+    /**
+     * Spring Bean providing a {@link KieServices} instance this encapsulates a
+     * {@link KieFileSystem} where rules are stored. Generally unless you're
+     * writing code to modify the rules at runtime, you will not need to
+     * reference this in any components. But it's provided as a bean, just in
+     * case.
+     * 
+     * @return A {@link KieServices} instance.
+     * @throws KieBuildException
+     *             If there are compilation errors in the rules.
+     */
     @Bean(name = "healthQuizKieServices")
     public KieServices kieServices() throws KieBuildException {
         
@@ -44,10 +61,18 @@ public class HealthQuizKieConfig {
         return kieServices;
     }
     
+    /**
+     * 
+     * 
+     * @param kieServices
+     * @return
+     */
     @Bean(name = "healthQuizKieContainer")
-    @Autowired
-    public KieContainer kieContainer(KieServices kieServices) {
-        KieContainer bean = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+    public KieContainer kieContainer(
+            @Qualifier("healthQuizKieServices") KieServices kieServices) {
+        
+        KieContainer bean = kieServices.newKieContainer(
+                kieServices.getRepository().getDefaultReleaseId());
         return bean;
     }
     

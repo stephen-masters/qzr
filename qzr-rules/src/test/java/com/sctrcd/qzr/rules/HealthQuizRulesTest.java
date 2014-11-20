@@ -32,6 +32,11 @@ import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
 
+/**
+ * This runs tests against the knowledge base defined in the {@link HealthQuizKieConfig}.
+ * 
+ * @author Stephen Masters
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { HealthQuizKieConfig.class }, loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles({ "drools" })
@@ -56,6 +61,14 @@ public class HealthQuizRulesTest {
     private FactFinder<Known<?>> knownFinder = new FactFinder<>(Known.class);
     private FactFinder<HrMax> hrMaxFinder = new FactFinder<>(HrMax.class);
 
+    /**
+     * Each test should start with a fresh session. We also attach fresh event
+     * listeners to that session, which we can use to track what rules have
+     * fired and what facts have been inserted/modified/retracted.
+     * 
+     * @throws KieBuildException
+     *             If there's a problem instantiating a new session.
+     */
     @Before
     public void initialize() throws KieBuildException {
         if (kieSession != null) {
