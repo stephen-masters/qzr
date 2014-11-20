@@ -24,6 +24,23 @@ import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
 
+/**
+ * This service encapsulates a long running Drools {@link KieSession}. It is
+ * scoped to an HTTP session, so that a user can have a long-running interaction
+ * with a Drools session that is dedicated to them. This makes it possible to
+ * gradually build up knowledge about that user.
+ * <p>
+ * The idea is that the rules will determine questions to ask based on what is
+ * already known about a user. As answers are provided, the knowledge base
+ * develops and different questions are asked.
+ * </p>
+ * 
+ * TODO - The agenda event publisher is publishing to a topic which is streamed
+ * to all users. It's okay for a bit of local testing fun, but would obviously 
+ * be a good idea to modify it so that each client gets their own queue.
+ * 
+ * @author Stephen Masters
+ */
 @Service
 @Scope(value="session", proxyMode=ScopedProxyMode.INTERFACES)
 public class HrMaxQuizServiceImpl implements QuizService {

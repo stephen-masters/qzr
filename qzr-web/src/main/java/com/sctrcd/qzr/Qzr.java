@@ -51,6 +51,12 @@ public class Qzr {
         log.info(sb.toString());
     }
 
+    /**
+     * The {@link ObjectMapper} gets injected by Spring when doing any Jackson
+     * JSON serialization. By adding custom serializers to handle certain Joda
+     * {@link DateTime} and {@link LocalDate} objects, we can control the JSON
+     * representation of these objects globally.
+     */
     @Bean
     public ObjectMapper objectMapper(SimpleModule jacksonJodaModule) {
         jacksonJodaModule.addSerializer(DateTime.class, new JsonJodaDateTimeSerializer());
@@ -61,6 +67,10 @@ public class Qzr {
         return om;
     }
 
+    /**
+     * Ensures that the {@link SerializationConfig} provided by our
+     * {@link ObjectMapper} bean is used throughout the application.
+     */
     @Bean
     public SerializationConfig serializationConfig(ObjectMapper objectMapper) {
         return objectMapper.getSerializationConfig();

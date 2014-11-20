@@ -10,6 +10,7 @@ import org.kie.api.builder.Message;
 import org.kie.api.builder.Message.Level;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 import org.kie.internal.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,13 @@ public class HealthQuizKieConfig {
     private static Logger log = LoggerFactory.getLogger(HealthQuizKieConfig.class);
     
     /**
-     * Spring Bean providing a {@link KieServices} instance this encapsulates a
-     * {@link KieFileSystem} where rules are stored. Generally unless you're
-     * writing code to modify the rules at runtime, you will not need to
-     * reference this in any components. But it's provided as a bean, just in
-     * case.
+     * Spring Bean providing a {@link KieServices} instance which among other
+     * things,encapsulates a {@link KieFileSystem} where rules are stored.
+     * Generally unless you're writing code to modify the rules at runtime, you
+     * will not need to reference this in any components. But it's provided as a
+     * bean, just in case.
      * 
-     * @return A {@link KieServices} instance.
+     * @return A {@link KieServices}.
      * @throws KieBuildException
      *             If there are compilation errors in the rules.
      */
@@ -62,10 +63,13 @@ public class HealthQuizKieConfig {
     }
     
     /**
-     * 
+     * The {@link KieContainer} provides the means to get hold of a
+     * {@link KieSession}. As such, this is what you will usually be
+     * injected into components.
      * 
      * @param kieServices
-     * @return
+     *            The {@link KieServices} bean.
+     * @return A {@link KieContainer}.
      */
     @Bean(name = "healthQuizKieContainer")
     public KieContainer kieContainer(
@@ -73,6 +77,7 @@ public class HealthQuizKieConfig {
         
         KieContainer bean = kieServices.newKieContainer(
                 kieServices.getRepository().getDefaultReleaseId());
+        
         return bean;
     }
     
