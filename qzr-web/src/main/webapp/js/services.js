@@ -8,6 +8,7 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
 
 	var svc = {
     	
+		initialised: false,
     	eventListeners: [],
 		socket : null,
 		stompClient : null,
@@ -51,14 +52,26 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
         	});
         },
 
-        loadQuestions: function(callback) {
+        loadQuestions: function() {
             $http.get('/api/quizzes/health/questions')
-	            .success(function(questions) { svc.model.questions = questions; });
-	        $http.get('/api/quizzes/health/results/hrmax')
-	        	.success(function(hrmax) { svc.model.hrmax = hrmax; })
-	        	.error(function() { svc.model.hrmax = null; });
-	        $http.get('/api/quizzes/health/knowns')
-	        	.success(function(knowns) { svc.model.knowns = knowns; });
+	            .success(function(questions) { 
+	            	svc.model.questions = questions;
+	    	        $http.get('/api/quizzes/health/results/hrmax')
+		        		.success(function(hrmax) {
+		        			svc.model.hrmax = hrmax;
+		        	        $http.get('/api/quizzes/health/knowns')
+			    				.success(function(knowns) {
+			    					svc.model.knowns = knowns;
+			    					svc.connect();
+			    				});
+		        		})
+		        		.error(function() { svc.model.hrmax = null; });
+	            });
+        },
+        
+       
+        init: function() {
+        	if (!svc.initialised) svc.loadQuestions();
         },
 
 		answer : function(question, answerValue) {

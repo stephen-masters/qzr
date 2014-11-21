@@ -73,9 +73,8 @@ qzrControllers.controller('HrMaxQuizCtrl', [
 		}
 
 		function init() {
-    		qzrSvc.loadQuestions();
-    		if (!qzrSvc.connected) qzrSvc.connect();
-    		qzrSvc.onEvent(onEvent);
+			qzrSvc.onEvent(onEvent);
+			qzrSvc.init();
     	}
 
     	init();
