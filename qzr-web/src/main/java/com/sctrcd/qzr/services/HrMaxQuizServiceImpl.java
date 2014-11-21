@@ -62,13 +62,11 @@ public class HrMaxQuizServiceImpl implements QuizService {
     private final FactFinder<HrMax> hrMaxFinder = new FactFinder<>(HrMax.class);
     
     @Autowired
-    public HrMaxQuizServiceImpl(SimpMessagingTemplate template) {
+    public HrMaxQuizServiceImpl(KieContainer kieContainer, SimpMessagingTemplate template) {
         
         log.info("Initialising a new quiz session.");
         
-        this.kieSession = KieServices.Factory.get()
-                .getKieClasspathContainer()
-                .newKieSession("HrmaxSession");
+        this.kieSession = kieContainer.newKieSession();
         
         this.agendaEventPublisher = new PublishingAgendaEventListener(template);
         this.agendaEventListener = new LoggingAgendaEventListener();

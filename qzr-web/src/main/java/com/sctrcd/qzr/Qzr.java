@@ -4,9 +4,6 @@ import java.util.Arrays;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -16,11 +13,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.qzr.web.json.JsonJodaDateTimeSerializer;
 import com.sctrcd.qzr.web.json.JsonJodaLocalDateSerializer;
 
@@ -33,6 +30,7 @@ import com.sctrcd.qzr.web.json.JsonJodaLocalDateSerializer;
  */
 @Configuration
 @ComponentScan
+@Import({HrmaxRulesConfig.class})
 @EnableAutoConfiguration
 @EnableConfigurationProperties
 public class Qzr {
@@ -61,25 +59,6 @@ public class Qzr {
         }
         log.info(sb.toString());
     }
-    
-//    @Bean(name = "kieServices")
-//    public KieServices kieServices() throws KieBuildException {
-//        return KieServices.Factory.get();
-//    }
-//    
-//    /**
-//     * The {@link KieContainer} provides the means to get hold of a
-//     * {@link KieSession}. As such, this is what you will usually be
-//     * injected into components.
-//     * 
-//     * @param kieServices
-//     *            The {@link KieServices} bean.
-//     * @return A {@link KieContainer}.
-//     */
-//    @Bean(name = "kieContainer")
-//    public KieContainer kieContainer(KieServices kieServices) {
-//        return kieServices.getKieClasspathContainer();
-//    }
     
     /**
      * The {@link ObjectMapper} gets injected by Spring when doing any Jackson
