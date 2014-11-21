@@ -15,7 +15,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.sctrcd.qzr.Qzr;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
-import com.sctrcd.qzr.services.HrMaxQuizServiceImpl;
 import com.sctrcd.qzr.services.QuizService;
 
 @RunWith(SpringJUnit4ClassRunner.class)

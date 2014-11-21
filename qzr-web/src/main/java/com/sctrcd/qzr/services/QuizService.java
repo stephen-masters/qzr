@@ -8,6 +8,11 @@ import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
 
+/**
+ * 
+ * 
+ * @author Stephen Masters
+ */
 public interface QuizService {
 
     Question getNextQuestion();

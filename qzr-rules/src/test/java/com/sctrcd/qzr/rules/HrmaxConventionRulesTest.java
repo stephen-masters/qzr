@@ -16,10 +16,8 @@ import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.sctrcd.beans.BeanPropertyFilter;
 import com.sctrcd.drools.DroolsUtil;
@@ -36,17 +34,9 @@ import com.sctrcd.qzr.facts.Question;
  * 
  * @author Stephen Masters
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { HrmaxRulesTestConfig.class }, loader = AnnotationConfigContextLoader.class)
-public class HrmaxRulesTest {
+public class HrmaxConventionRulesTest {
 
-    private static Logger log = LoggerFactory.getLogger(HrmaxRulesTest.class);
-
-    @Autowired
-    private KieServices kieServices;
-
-    @Autowired
-    private KieContainer kieContainer;
+    private static Logger log = LoggerFactory.getLogger(HrmaxConventionRulesTest.class);
 
     private KieSession kieSession;
 
@@ -70,7 +60,10 @@ public class HrmaxRulesTest {
         if (kieSession != null) {
             kieSession.dispose();
         }
-        kieSession = kieContainer.newKieSession();
+
+        this.kieSession = KieServices.Factory.get()
+                .getKieClasspathContainer()
+                .newKieSession("HrmaxSession");
         
         agendaEventListener = new TrackingAgendaEventListener();
         workingMemoryEventListener = new TrackingRuleRuntimeEventListener();
@@ -84,8 +77,6 @@ public class HrmaxRulesTest {
      */
     @Test
     public void shouldConfigureDroolsComponents() {
-        assertNotNull(kieServices);
-        assertNotNull(kieContainer);
         assertNotNull(kieSession);
         
         for (ObjectInsertedEvent ev : workingMemoryEventListener.getInsertions()) {

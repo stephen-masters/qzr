@@ -27,6 +27,7 @@ import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.KnownList;
 import com.sctrcd.qzr.facts.Question;
+import com.sctrcd.qzr.services.HrMaxQuizServiceImpl;
 import com.sctrcd.qzr.services.QuizService;
 import com.sctrcd.qzr.web.resources.AnswerResource;
 import com.sctrcd.qzr.web.resources.AnswerResourceAssembler;
@@ -45,10 +46,8 @@ public class HrMaxQuizController {
 
     @Autowired
     private QuizService svc;
-    
     @Autowired
     private AnswerResourceAssembler answerAssembler;
-    
     @Autowired
     private QuestionResourceAssembler questionAssembler;
 

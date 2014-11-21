@@ -24,7 +24,7 @@ import com.sctrcd.drools.DroolsUtil;
 import com.sctrcd.drools.FactFinder;
 import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.drools.monitoring.TrackingAgendaEventListener;
-import com.sctrcd.drools.monitoring.TrackingWorkingMemoryEventListener;
+import com.sctrcd.drools.monitoring.TrackingRuleRuntimeEventListener;
 import com.sctrcd.qzr.Qzr;
 import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
@@ -37,20 +37,18 @@ import com.sctrcd.qzr.facts.Question;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Qzr.class)
-public class HrmaxRulesTest {
+public class HrmaxConventionRulesTest {
 
-    private static Logger log = LoggerFactory.getLogger(HrmaxRulesTest.class);
+    private static Logger log = LoggerFactory.getLogger(HrmaxConventionRulesTest.class);
 
-    @Autowired
     private KieServices kieServices;
 
-    @Autowired
     private KieContainer kieContainer;
     
     private KieSession kieSession;
 
     private TrackingAgendaEventListener agendaEventListener;
-    private TrackingWorkingMemoryEventListener workingMemoryEventListener;
+    private TrackingRuleRuntimeEventListener workingMemoryEventListener;
     
     private FactFinder<Question> valueQuestionFinder = new FactFinder<>(Question.class);
     private FactFinder<Known<?>> knownFinder = new FactFinder<>(Known.class);
@@ -70,10 +68,12 @@ public class HrmaxRulesTest {
             kieSession.dispose();
         }
 
+        this.kieServices = KieServices.Factory.get();
+        this.kieContainer = kieServices.getKieClasspathContainer(); 
         this.kieSession = kieContainer.newKieSession("HrmaxSession");
         
         agendaEventListener = new TrackingAgendaEventListener();
-        workingMemoryEventListener = new TrackingWorkingMemoryEventListener();
+        workingMemoryEventListener = new TrackingRuleRuntimeEventListener();
 
         kieSession.addEventListener(agendaEventListener);
         kieSession.addEventListener(workingMemoryEventListener);

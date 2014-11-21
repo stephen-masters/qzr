@@ -27,10 +27,10 @@ import com.sctrcd.drools.DroolsUtil;
  * 
  * @author Stephen Masters
  */
-public class TrackingWorkingMemoryEventListener
+public class TrackingRuleRuntimeEventListener
             extends DefaultRuleRuntimeEventListener {
 
-    private static Logger log = LoggerFactory.getLogger(TrackingWorkingMemoryEventListener.class);
+    private static Logger log = LoggerFactory.getLogger(TrackingRuleRuntimeEventListener.class);
 
     private List<RuleRuntimeEvent> allEvents = new ArrayList<>();
     private List<ObjectInsertedEvent> insertions = new ArrayList<>();
@@ -46,7 +46,7 @@ public class TrackingWorkingMemoryEventListener
      * Void constructor sets the listener to record all working memory events
      * with no filtering.
      */
-    public TrackingWorkingMemoryEventListener() {
+    public TrackingRuleRuntimeEventListener() {
         this.handleFilter = null;
     }
     
@@ -57,11 +57,11 @@ public class TrackingWorkingMemoryEventListener
      * @param handle
      *            The {@link FactHandle} to filter on.
      */
-    public TrackingWorkingMemoryEventListener(FactHandle handle) {
+    public TrackingRuleRuntimeEventListener(FactHandle handle) {
         this.handleFilter = handle;
     }
     
-    public TrackingWorkingMemoryEventListener(Class<?> classFilter) {
+    public TrackingRuleRuntimeEventListener(Class<?> classFilter) {
         this.handleFilter = null;
         this.classFilter = classFilter;
     }

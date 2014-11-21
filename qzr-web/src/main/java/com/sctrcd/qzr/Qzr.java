@@ -24,6 +24,13 @@ import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.qzr.web.json.JsonJodaDateTimeSerializer;
 import com.sctrcd.qzr.web.json.JsonJodaLocalDateSerializer;
 
+/**
+ * By running this main class as a Java application, Spring Boot will find and
+ * wire up all configurations and beans in the application. It will also run up
+ * an embedded Tomcat web server for the REST API controllers and web pages.
+ * 
+ * @author Stephen Masters
+ */
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
@@ -55,25 +62,25 @@ public class Qzr {
         log.info(sb.toString());
     }
     
-    @Bean(name = "kieServices")
-    public KieServices kieServices() throws KieBuildException {
-        return KieServices.Factory.get();
-    }
+//    @Bean(name = "kieServices")
+//    public KieServices kieServices() throws KieBuildException {
+//        return KieServices.Factory.get();
+//    }
+//    
+//    /**
+//     * The {@link KieContainer} provides the means to get hold of a
+//     * {@link KieSession}. As such, this is what you will usually be
+//     * injected into components.
+//     * 
+//     * @param kieServices
+//     *            The {@link KieServices} bean.
+//     * @return A {@link KieContainer}.
+//     */
+//    @Bean(name = "kieContainer")
+//    public KieContainer kieContainer(KieServices kieServices) {
+//        return kieServices.getKieClasspathContainer();
+//    }
     
-    /**
-     * The {@link KieContainer} provides the means to get hold of a
-     * {@link KieSession}. As such, this is what you will usually be
-     * injected into components.
-     * 
-     * @param kieServices
-     *            The {@link KieServices} bean.
-     * @return A {@link KieContainer}.
-     */
-    @Bean(name = "kieContainer")
-    public KieContainer kieContainer(KieServices kieServices) {
-        return kieServices.getKieClasspathContainer();
-    }
-
     /**
      * The {@link ObjectMapper} gets injected by Spring when doing any Jackson
      * JSON serialization. By adding custom serializers to handle certain Joda
