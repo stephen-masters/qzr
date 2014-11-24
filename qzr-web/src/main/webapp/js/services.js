@@ -17,7 +17,8 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
         model : {
             questions : [],
             knowns : [],
-            hrmax: null
+            hrmax: null,
+            events: []
         },
 
         connect: function() {
@@ -27,13 +28,13 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
 			svc.stompClient.connect({}, function(frame) {
 				svc.connected = true;
 				console.log('Connected to /drools : ' + frame);
-				svc.stompClient.subscribe('/topic/agendaevents/', svc.newEvent );
+				svc.stompClient.subscribe('/queue/agendaevents/', svc.newEvent );
 			});
         },
         
         newEvent: function(data) {
 			var event = JSON.parse(data.body);
-			svc.notifyEventListeners(event);
+			svc.model.events.push(event);
         },
 
         disconnect: function() {
@@ -42,16 +43,6 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
             console.log("Disconnected Drools working memory event listener client");
         },
         
-        onEvent : function(callback) {
-        	if (!_.contains(svc.eventListeners, callback)) svc.eventListeners.push(callback);
-        },
-        
-        notifyEventListeners : function(event) {
-        	_.each(svc.eventListeners, function(callback) {
-        		callback.call(undefined, event);
-        	});
-        },
-
         loadQuestions: function() {
             $http.get('/api/quizzes/health/questions')
 	            .success(function(questions) { 
@@ -59,13 +50,13 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
 	    	        $http.get('/api/quizzes/health/results/hrmax')
 		        		.success(function(hrmax) {
 		        			svc.model.hrmax = hrmax;
-		        	        $http.get('/api/quizzes/health/knowns')
-			    				.success(function(knowns) {
-			    					svc.model.knowns = knowns;
-			    					svc.connect();
-			    				});
 		        		})
 		        		.error(function() { svc.model.hrmax = null; });
+		        	$http.get('/api/quizzes/health/knowns')
+						.success(function(knowns) {
+							svc.model.knowns = knowns;
+						});
+					svc.connect();
 	            });
         },
         

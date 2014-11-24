@@ -4,9 +4,7 @@ import org.kie.api.definition.rule.Rule;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
 
 import com.sctrcd.qzr.web.resources.AgendaEventMessage;
 
@@ -18,12 +16,10 @@ import com.sctrcd.qzr.web.resources.AgendaEventMessage;
  * 
  * @author Stephen Masters
  */
-@Component
 public class PublishingAgendaEventListener extends DefaultAgendaEventListener {
 
     private final SimpMessagingTemplate template;
 
-    @Autowired
     public PublishingAgendaEventListener(SimpMessagingTemplate template) {
         this.template = template;
     }
@@ -41,7 +37,7 @@ public class PublishingAgendaEventListener extends DefaultAgendaEventListener {
 
         AgendaEventMessage msg = new AgendaEventMessage(rule.getName());
 
-        this.template.convertAndSend("/topic/agendaevents/", msg);
+        this.template.convertAndSend("/queue/agendaevents/", msg);
     }
 
 }

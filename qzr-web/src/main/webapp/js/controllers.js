@@ -48,6 +48,14 @@ qzrControllers.controller('HrMaxQuizCtrl', [
     		true
     	);
 
+    	$scope.$watch(
+    		function() { return qzrSvc.model.events; },
+    		function(newVal, oldVal) { 
+    			$scope.events = qzrSvc.model.events; 
+    		},
+    		true
+    	);
+
 		$scope.isAnswered = function(question) {
 			return question.answer != null;
 		};
@@ -67,13 +75,8 @@ qzrControllers.controller('HrMaxQuizCtrl', [
 			qzrSvc.retractAnswer(question);
 		};
 
-		function onEvent(event) {
-			if ($scope.events == null) $scope.events = [];
-			$scope.events.push(event);
-		}
 
 		function init() {
-			qzrSvc.onEvent(onEvent);
 			qzrSvc.init();
     	}
 
