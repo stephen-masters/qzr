@@ -1,0 +1,162 @@
+package com.sctrcd.qzr.hrmax
+
+import org.joda.time.LocalDate
+import com.sctrcd.qzr.facts.*
+
+
+declare IsMale
+end
+declare IsFemale
+end
+
+
+rule "Retract old answers"
+when
+    $oldAnswer: Answer()
+    $newAnswer: Answer(key == $oldAnswer.key, when > $oldAnswer.when)
+then
+    retract( $oldAnswer );
+end
+
+
+// By binding an answer to the question it is answering, we can retract a question 
+// once answered, but still be able to get its details via the answer in working memory.
+//
+rule "Bind question to answer"
+    salience 10
+when
+    $answer: Answer(question == null)
+    $question: Question(key == $answer.key)
+then
+    $answer.setQuestion($question);
+    $question.setAnswer($answer);
+    update($answer);
+    update($question);
+end
+
+
+// If an answer can't be parsed, then it will be retracted from working memory.
+// Unfortunately it will still be referenced by the question if we don't unbind it.
+//
+rule "Unbind answer from question"
+when
+    $question: Question($key: key, answer != null)
+    not Answer(key == $key)
+then
+    $question.setAnswer(null);
+    update($question);
+end
+
+
+rule "Ask dateOfBirth"
+    activation-group "questions"
+when
+    not Known(key == "dateOfBirth")
+then
+    insertLogical(new Question("dateOfBirth", "What is your date of birth? (yyyy-MM-dd)", AnswerType.LOCAL_DATE));
+end
+
+rule "Learn date of birth"
+when
+    $answer: Answer(key == "dateOfBirth")
+then
+    try {
+        LocalDate dob = LocalDate.parse($answer.getValue());
+        insertLogical(new Known<>("dateOfBirth", dob));
+    } catch (Exception ex) {
+        System.out.println("Answer not valid. Deleting it...");
+        delete( $answer );
+    }
+end
+
+
+rule "Ask gender"
+    activation-group "questions"
+when
+    Known(key == "dateOfBirth")
+    not Known(key == "gender")
+then
+    Question q = new Question("gender", 
+        "There are adjusted max HR calculations for men and women. Please provide this information to see the result.");
+    q.addOption("M", "Male");
+    q.addOption("F", "Female");
+    insertLogical(q);
+end
+
+rule "Learn gender"
+when
+    $answer: Answer(key == "gender")
+then
+    insertLogical(new Known<>("gender", $answer.getValue()));
+end
+
+rule "Is male"
+when
+    $gender: Known(key == "gender", value == "M")
+then
+    insertLogical( new IsMale() );
+end
+rule "Is female"
+when
+    $gender: Known(key == "gender", value == "F")
+then
+    insertLogical( new IsFemale() );
+end
+
+
+rule "Calculate age"
+when
+    $known: Known(key == "dateOfBirth")
+then
+    LocalDate dob = (LocalDate) $known.getValue();
+    // $dob should be a Joda Time LocalDate
+    LocalDate today = new LocalDate();
+    Integer age = today.getYear() - dob.getYear();
+    insertLogical(new Known<Integer>("age", age));
+end
+
+rule "Calculate best guess max HR"
+    activation-group "hr-max-calc"
+    salience 90 // less than the gender-adjusted calcs
+when
+    $knownAge: Known(key == "age", $age: value)
+    not IsMale()
+    not IsFemale()
+then
+    Integer age = (Integer) $age;
+    Integer hrMax = Double.valueOf(220 - age).intValue();
+    insertLogical(new HrMax(hrMax, "Best guess"));
+end
+
+rule "Calculate male-adjusted max HR"
+    activation-group "hr-max-calc"
+    salience 100
+when
+    Known(key == "age", $age: value)
+    IsMale()
+then
+    Integer age = (Integer) $age;
+    Integer hrMax = Double.valueOf(214 - (0.8 * age)).intValue();
+    insertLogical(new HrMax(hrMax, "Male-adjusted"));
+end
+
+rule "Calculate female-adjusted max HR"
+    activation-group "hr-max-calc"
+    salience 100
+when
+    Known(key == "age", $age: value)
+    IsFemale()
+then
+    Integer age = (Integer) $age;
+    Integer hrMax = Double.valueOf(209 - (0.9 * age)).intValue(); 
+    insertLogical(new HrMax(hrMax, "Female-adjusted"));
+end
+
+rule "Learn HR max"
+when
+    $hrMax: HrMax()
+then
+    insertLogical(new Known("hrMax", $hrMax.getValue()));
+end
+
+

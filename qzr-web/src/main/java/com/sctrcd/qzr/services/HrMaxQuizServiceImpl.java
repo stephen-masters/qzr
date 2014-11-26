@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.kie.api.KieServices;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.runtime.KieContainer;
@@ -60,11 +61,15 @@ public class HrMaxQuizServiceImpl implements QuizService {
     private final FactFinder<HrMax> hrMaxFinder = new FactFinder<>(HrMax.class);
     
     @Autowired
-    public HrMaxQuizServiceImpl(KieContainer kieContainer, SimpMessagingTemplate template) {
+    public HrMaxQuizServiceImpl(SimpMessagingTemplate template) {
         
         log.info("Initialising a new quiz session.");
         
-        this.kieSession = kieContainer.newKieSession();
+        //this.kieSession = kieContainer.newKieSession();
+        
+        this.kieSession = KieServices.Factory.get()
+                .getKieClasspathContainer()
+                .newKieSession("HrmaxSession");
         
         this.agendaEventPublisher = new PublishingAgendaEventListener(template);
         this.agendaEventListener = new LoggingAgendaEventListener();
