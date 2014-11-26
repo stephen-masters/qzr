@@ -53,7 +53,7 @@ rule "Ask dateOfBirth"
 when
     not Known(key == "dateOfBirth")
 then
-    insertLogical(new Question("dateOfBirth", "What is your date of birth?", AnswerType.LOCAL_DATE));
+    insertLogical(new Question("dateOfBirth", "What is your date of birth? (yyyy-MM-dd)", AnswerType.LOCAL_DATE));
 end
 
 rule "Learn date of birth"

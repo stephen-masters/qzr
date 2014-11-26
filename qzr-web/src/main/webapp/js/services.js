@@ -13,7 +13,7 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
 		socket : null,
 		stompClient : null,
 		isConnecting : false,
-		connected : false,
+		isConnected : false,
 
         model : {
             questions : [],
@@ -23,6 +23,7 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
         },
 
         connect: function() {
+        	// If for some reason this gets called twice, we try to avoid connecting again.
         	if (svc.isConnecting || svc.isConnected) return;
 
         	svc.isConnecting = true;
@@ -31,7 +32,7 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
 			svc.socket = new SockJS('/drools');
 			svc.stompClient = Stomp.over(svc.socket);
 			svc.stompClient.connect({}, function(frame) {
-				svc.connected = true;
+				svc.isConnected = true;
 				svc.isConnecting = false;
 				console.log('Connected to /drools : ' + frame);
 				svc.stompClient.subscribe('/queue/agendaevents/', svc.newEvent );

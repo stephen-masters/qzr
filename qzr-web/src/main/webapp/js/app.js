@@ -13,8 +13,7 @@ angular.module('qzr', [
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.
   when('/quizzes/hrmax', {
-	  templateUrl: 'partials/hrmax-quiz.html', 
-	  controller: 'HrMaxQuizCtrl'
+	  templateUrl: 'partials/hrmax-quiz.html'
   }).
   otherwise({
 	  redirectTo: '/quizzes/hrmax'
