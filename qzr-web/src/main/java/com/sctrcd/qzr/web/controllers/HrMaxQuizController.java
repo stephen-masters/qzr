@@ -69,6 +69,9 @@ public class HrMaxQuizController {
 
     @RequestMapping(value = "/questions", method = RequestMethod.GET, produces = "application/json")
     public HttpEntity<List<QuestionResource>> getQuestions() throws NotFoundException {
+        
+        log.debug("Request received for all questions.");
+        
         List<Question> questions = svc.allQuestions();
 
         log.debug("Questions: " + questions);
@@ -80,6 +83,9 @@ public class HrMaxQuizController {
     
     @RequestMapping(value = "/questions/next", method = RequestMethod.GET, produces = "application/json")
     public HttpEntity<QuestionResource> getNextQuestion() throws NotFoundException {
+        
+        log.debug("Request received for next question.");
+        
         Question question = svc.getNextQuestion();
 
         log.debug("Question: " + question);

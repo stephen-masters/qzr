@@ -54,10 +54,9 @@ public class RootController {
     public RootController() {
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
-    public String getQuiz() throws NotFoundException {
-        model.addAttribute("messages", messageRepository.findAll());
-        return "message/list";
+    @RequestMapping("/")
+    String index() {
+        return "index";
     }
 
 }

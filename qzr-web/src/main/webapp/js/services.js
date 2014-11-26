@@ -12,6 +12,7 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
     	eventListeners: [],
 		socket : null,
 		stompClient : null,
+		isConnecting : false,
 		connected : false,
 
         model : {
@@ -22,11 +23,16 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
         },
 
         connect: function() {
+        	if (svc.isConnecting || svc.isConnected) return;
+
+        	svc.isConnecting = true;
+
 			// Assumes that service is on same server and that we have been consistent with ports.
 			svc.socket = new SockJS('/drools');
 			svc.stompClient = Stomp.over(svc.socket);
 			svc.stompClient.connect({}, function(frame) {
 				svc.connected = true;
+				svc.isConnecting = false;
 				console.log('Connected to /drools : ' + frame);
 				svc.stompClient.subscribe('/queue/agendaevents/', svc.newEvent );
 			});
@@ -50,19 +56,19 @@ qzrServices.factory('qzrSvc', ['$http', function($http) {
 	    	        $http.get('/api/quizzes/health/results/hrmax')
 		        		.success(function(hrmax) {
 		        			svc.model.hrmax = hrmax;
+				        	$http.get('/api/quizzes/health/knowns')
+							.success(function(knowns) {
+								svc.model.knowns = knowns;
+							});
 		        		})
 		        		.error(function() { svc.model.hrmax = null; });
-		        	$http.get('/api/quizzes/health/knowns')
-						.success(function(knowns) {
-							svc.model.knowns = knowns;
-						});
-					svc.connect();
 	            });
         },
         
        
         init: function() {
         	if (!svc.initialised) svc.loadQuestions();
+        	svc.connect();
         },
 
 		answer : function(question, answerValue) {
