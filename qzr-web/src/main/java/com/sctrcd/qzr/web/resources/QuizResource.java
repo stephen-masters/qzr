@@ -7,6 +7,12 @@ import org.springframework.hateoas.ResourceSupport;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+/**
+ * Provides details about a quiz. Not much detail here, as the main purpose is
+ * to add links pointing at the various REST endpoints.
+ * 
+ * @author Stephen Masters
+ */
 @JsonInclude(Include.NON_EMPTY)
 @XmlRootElement(name = "question")
 public class QuizResource extends ResourceSupport {

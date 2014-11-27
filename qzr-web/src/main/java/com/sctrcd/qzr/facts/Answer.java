@@ -5,6 +5,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+/**
+ * An answer to a question. The key is the same as the question for which this
+ * is an answer.
+ * 
+ * @author Stephen Masters
+ */
 @XmlRootElement(name = "known")
 public class Answer {
 
@@ -12,7 +18,7 @@ public class Answer {
     private String value;
     private Question question;
     private DateTime when;
-    
+
     public Answer() {
     }
 
@@ -25,13 +31,13 @@ public class Answer {
         this.value = value;
         this.when = when;
     }
-    
+
     public Answer(String key, String value, Question question, DateTime when) {
         this.key = key;
         this.value = value;
         this.when = when;
     }
-    
+
     public String getKey() {
         return key;
     }
@@ -47,7 +53,7 @@ public class Answer {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     public Question getQuestion() {
         return question;
     }
@@ -65,8 +71,8 @@ public class Answer {
     }
 
     public String toString() {
-        return this.getClass().getSimpleName() 
-                + ": { key=\"" + key + "\", value=\"" + value + "\" }";
+        return this.getClass().getSimpleName() + ": { key=\"" + key
+                + "\", value=\"" + value + "\" }";
     }
 
 }

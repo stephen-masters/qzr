@@ -5,6 +5,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+/**
+ * A generic piece of 'known' information. The system learns by buiding up known
+ * facts.
+ * 
+ * @author Stephen Masters
+ *
+ * @param <T>
+ *            The class of the value.
+ */
 @XmlRootElement(name = "known")
 public class Known<T> {
 
@@ -26,7 +35,7 @@ public class Known<T> {
         this.value = value;
         this.when = when;
     }
-    
+
     public String getKey() {
         return key;
     }
@@ -42,7 +51,7 @@ public class Known<T> {
     public void setValue(T value) {
         this.value = value;
     }
-    
+
     public DateTime getWhen() {
         return when;
     }
@@ -52,8 +61,8 @@ public class Known<T> {
     }
 
     public String toString() {
-        return this.getClass().getSimpleName() 
-                + ": { key=\"" + key + "\", value=\"" + value + "\" }";
+        return this.getClass().getSimpleName() + ": { key=\"" + key
+                + "\", value=\"" + value + "\" }";
     }
 
 }

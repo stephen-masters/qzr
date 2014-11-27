@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 import com.sctrcd.qzr.facts.Question;
 import com.sctrcd.qzr.web.controllers.HrMaxQuizController;
 
+/**
+ * Injected into the {@link HrMaxQuizController} as a tool for building {@link QuestionResource}.
+ * 
+ * @author Stephen Masters
+ */
 @Component
 public class QuestionResourceAssembler extends ResourceAssemblerSupport<Question, QuestionResource> {
 

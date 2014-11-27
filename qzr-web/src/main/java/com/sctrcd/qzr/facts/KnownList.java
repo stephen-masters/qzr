@@ -7,6 +7,11 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * A collection of {@link Known}, which maps the key to the object.
+ * 
+ * @author Stephen masters
+ */
 @XmlRootElement(name = "knowns")
 public class KnownList {
 
@@ -25,25 +30,32 @@ public class KnownList {
     public Map<String, Known<?>> getKnowns() {
         return knowns;
     }
-    
+
+    /**
+     * Get a reference to a {@link Known} with the specified key. Null if there
+     * is none.
+     */
     public Known<?> getKnown(String key) {
         return knowns.get(key);
     }
 
     public void setKnowns(Collection<Known<?>> knowns) {
-        if (this.knowns == null) this.knowns = new HashMap<>();
+        if (this.knowns == null)
+            this.knowns = new HashMap<>();
         for (Known<?> known : knowns) {
             this.knowns.put(known.getKey(), known);
         }
     }
-    
+
     public void add(Known<?> known) {
-        if (this.knowns == null) this.knowns = new HashMap<>();
+        if (this.knowns == null)
+            this.knowns = new HashMap<>();
         this.knowns.put(known.getKey(), known);
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(KnownList.class.getSimpleName() + ": { knowns=[ ");
+        StringBuilder sb = new StringBuilder(KnownList.class.getSimpleName()
+                + ": { knowns=[ ");
         for (Known<?> q : knowns.values()) {
             sb.append(q.toString());
             sb.append(",  ");
@@ -54,5 +66,5 @@ public class KnownList {
             return sb.substring(0, sb.length() - 3) + " ]}";
         }
     }
-    
+
 }

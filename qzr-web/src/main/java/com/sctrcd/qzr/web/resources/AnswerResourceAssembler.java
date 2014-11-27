@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 import com.sctrcd.qzr.facts.Answer;
 import com.sctrcd.qzr.web.controllers.HrMaxQuizController;
 
+/**
+ * Injected into the {@link HrMaxQuizController} as a tool for building {@link AnswerResource}.
+ * 
+ * @author Stephen Masters
+ */
 @Component
 public class AnswerResourceAssembler extends ResourceAssemblerSupport<Answer, AnswerResource> {
 
@@ -32,9 +37,13 @@ public class AnswerResourceAssembler extends ResourceAssemblerSupport<Answer, An
         resource.setWhen(answer.getWhen());
 
         if (answer.getQuestion() != null) {
-            resource.add(linkTo(methodOn(HrMaxQuizController.class)
-                    .getQuestion(answer.getKey()))
-                    .withRel("question"));
+            try {
+                resource.add(linkTo(methodOn(HrMaxQuizController.class)
+                        .getQuestion(answer.getKey()))
+                        .withRel("question"));
+            } catch (NotFoundException e) {
+                // Do nothing ... the exception cannot be thrown.
+            }
         }
 
         return resource;

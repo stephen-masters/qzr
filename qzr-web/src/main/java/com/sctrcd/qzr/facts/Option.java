@@ -1,5 +1,12 @@
 package com.sctrcd.qzr.facts;
 
+/**
+ * A {@link Question} can define a list of options which can be used as answers.
+ * These comprise a key, which will be used to identify the option internally,
+ * and a value, which is a more human-readable value.
+ * 
+ * @author Stephen Masters
+ */
 public class Option {
 
     private String key;

@@ -1,5 +1,10 @@
 package com.sctrcd.qzr.facts;
 
+/**
+ * A person's maximum heart rate.
+ * 
+ * @author Stephen Masters
+ */
 public class HrMax {
 
     private final Integer value;
@@ -14,6 +19,7 @@ public class HrMax {
         return value;
     }
 
+    /** Indicates the calculation which was used to calculate the value. */
     public String getAlgorithm() {
         return algorithm;
     }

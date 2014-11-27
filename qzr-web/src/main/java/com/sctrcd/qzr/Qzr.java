@@ -60,6 +60,12 @@ public class Qzr {
         log.info(sb.toString());
     }
     
+    /**
+     * By defining the {@link KieContainer} as a bean here, we ensure that
+     * Drools will hunt out the kmodule.xml and rules on application startup.
+     * 
+     * @return The {@link KieContainer}.
+     */
     @Bean
     public KieContainer kieContainer() {
         return KieServices.Factory.get().getKieClasspathContainer();

@@ -4,6 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * A question. This comprises a key to be used as a reference back to it, and
+ * the longer text of the question. It can also indicate the data type to be
+ * provided in the response and potentially a constrained list of options.
+ * 
  * 
  * @author Stephen Masters
  */

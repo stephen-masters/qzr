@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sctrcd.qzr.facts.Answer;
 import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
+import com.sctrcd.qzr.facts.Option;
 import com.sctrcd.qzr.facts.Question;
 import com.sctrcd.qzr.services.HrMaxQuizService;
 import com.sctrcd.qzr.web.resources.AnswerResource;
@@ -36,6 +38,35 @@ import com.sctrcd.qzr.web.resources.QuestionResource;
 import com.sctrcd.qzr.web.resources.QuestionResourceAssembler;
 import com.sctrcd.qzr.web.resources.QuizResource;
 
+/**
+ * This is the controller providing the REST API for the HR Max quiz.
+ * <p>
+ * For those unfamiliar with it, this API makes use of Spring HATEOAS to provide
+ * hypertext links in the JSON responses. A number of methods return objects
+ * which implement {@link ResourceSupport}, which means that the JSON returned
+ * will contain 'self' links to those resources and other links to operations
+ * which are available, relating to them. For instance, a
+ * {@link QuestionResource} provides a link to the endpoint where an answer can
+ * be provided. An {@link AnswerResource} may have a link back to the
+ * {@link QuestionResource} that it was a response to.
+ * </p>
+ * <p>
+ * You will therefore notice various <code>linkTo(methodOn(...))</code>
+ * statements. Also resource assemblers such as <code>answerAssembler</code>
+ * &amp; <code>questionAssembler</code>, make it a little bit less effort to
+ * build these resource objects.
+ * </p>
+ * <p>
+ * You may notice that elsewhere in the application, constructor injection is
+ * used, whereas here, the fields are <code>@Autowired</code>. This is because
+ * the {@link HrMaxQuizService} is session-scoped, which means that it can't be
+ * injected at the time the controller is instantiated. My usual preference is
+ * to go with final fields and constructor injection, as this makes it a lot
+ * easier to inject mocks when unit testing.
+ * </p>
+ * 
+ * @author Stephen Masters
+ */
 @RestController
 @RequestMapping("/api/quizzes/health")
 public class HrMaxQuizController {
@@ -52,21 +83,38 @@ public class HrMaxQuizController {
     public HrMaxQuizController() {
     }
 
+    /**
+     * The 'home' of the HRMax quiz API. By GETing this, you should see links to
+     * the various operations which are available. i.e.:
+     * 
+     * <pre>
+     * curl http://127.0.0.1:40080/api/quizzes/health/
+     * </pre>
+     */
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
-    public QuizResource getQuiz() throws NotFoundException {
+    public QuizResource getQuiz() {
         QuizResource quiz = new QuizResource("hrmax");
 
-        quiz.add(linkTo(methodOn(HrMaxQuizController.class).getQuiz()).withSelfRel());
-        quiz.add(linkTo(methodOn(HrMaxQuizController.class).getNextQuestion()).withRel("nextQuestion"));
-        quiz.add(linkTo(methodOn(HrMaxQuizController.class).getAnswers()).withRel("answers"));
-        quiz.add(linkTo(methodOn(HrMaxQuizController.class).getKnowns()).withRel("knowns"));
-        quiz.add(linkTo(methodOn(HrMaxQuizController.class).getHrMax()).withRel("hrmax"));
+        try {
+            quiz.add(linkTo(methodOn(HrMaxQuizController.class).getQuiz()).withSelfRel());
+            quiz.add(linkTo(methodOn(HrMaxQuizController.class).getNextQuestion()).withRel("nextQuestion"));
+            quiz.add(linkTo(methodOn(HrMaxQuizController.class).getAnswers()).withRel("answers"));
+            quiz.add(linkTo(methodOn(HrMaxQuizController.class).getKnowns()).withRel("knowns"));
+            quiz.add(linkTo(methodOn(HrMaxQuizController.class).getHrMax()).withRel("hrmax"));
+        } catch (NotFoundException e) {
+            // Ignore ... the exception can't actually be thrown.
+        }
 
         return quiz;
     }
 
+    /**
+     * Get a list of all questions which have been asked so far.
+     * 
+     * @return A list of {@link QuestionResource}.
+     */
     @RequestMapping(value = "/questions", method = RequestMethod.GET, produces = "application/json")
-    public HttpEntity<List<QuestionResource>> getQuestions() throws NotFoundException {
+    public HttpEntity<List<QuestionResource>> getQuestions() {
         
         log.debug("Request received for all questions.");
         
@@ -79,14 +127,24 @@ public class HrMaxQuizController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
     
+    /**
+     * Get hold of the next question to be answered. If there are no more
+     * questions being asked, then this will return a 404 and a message in the
+     * JSON response to indicate that there are no more questions.
+     * 
+     * @return A {@link QuestionResource}.
+     * @throws NotFoundException
+     *             If there are no more questions.
+     */
     @RequestMapping(value = "/questions/next", method = RequestMethod.GET, produces = "application/json")
-    public HttpEntity<QuestionResource> getNextQuestion() throws NotFoundException {
+    public HttpEntity<QuestionResource> getNextQuestion() 
+            throws NotFoundException {
         
         log.debug("Request received for next question.");
         
         Question question = svc.getNextQuestion();
 
-        log.debug("Question: " + question);
+        log.debug("The next question is: " + question);
         
         if (question == null) {
             throw new NotFoundException("NO_MORE_QUESTIONS", "No more questions.");
@@ -97,21 +155,47 @@ public class HrMaxQuizController {
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
+    /**
+     * Find a specific question which has been asked.
+     * 
+     * @param key The unique key for the question.
+     * @return
+     * @throws NotFoundException
+     */
     @RequestMapping(value = "/questions/{key}", method = RequestMethod.GET, produces = "application/json")
-    public HttpEntity<QuestionResource> getQuestion(@PathVariable(value = "key") String key) {
+    public HttpEntity<QuestionResource> getQuestion(@PathVariable(value = "key") String key) 
+            throws NotFoundException {
+        
         Question question = svc.getQuestion(key);
 
-        log.debug("Question: " + question);
+        log.debug("Found question for key [" + key + "]: " + question);
+        
+        if (question == null) {
+            throw new NotFoundException("NOT_FOUND", "Question [" + key + "] cannot be found.");
+        }
         
         QuestionResource resource = questionAssembler.toResource(question);
 
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
     
+    /**
+     * Find a specific question which has been asked.
+     * 
+     * @param key
+     *            The unique key of the question being answered.
+     * @param answer
+     *            The details of the answer.
+     * @return The answer.
+     * @throws BadRequestException
+     *             If the answer can't be parsed. Perhaps it's supposed to be a
+     *             date, but the format is incorrect. Or an invalid {@link Option}.
+     */
     @RequestMapping(value = "/questions/{key}/answer", method = RequestMethod.PUT)
     public HttpEntity<AnswerResource> answer(
             @PathVariable(value = "key") String key, 
-            @RequestBody(required = true) AnswerResource answer) throws BadRequestException {
+            @RequestBody(required = true) AnswerResource answer) 
+                    throws BadRequestException {
 
         log.debug("Answer to question [" + key + "]: " + answer.getValue());
 
@@ -128,10 +212,15 @@ public class HrMaxQuizController {
         return new ResponseEntity<>(answerResource, HttpStatus.OK);
     }
     
+    /**
+     * This is called to indicate that the question will not be answered.
+     * 
+     * @param key The unique key of the question.
+     */
     @RequestMapping(value = "/questions/{key}/skip", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void skip(
-            @PathVariable(value = "key") String key) throws BadRequestException {
+            @PathVariable(value = "key") String key) {
 
         log.debug("Skipping question [" + key + "].");
         
@@ -140,6 +229,16 @@ public class HrMaxQuizController {
         svc.answer(fact);
     }
     
+    /**
+     * Find the answer to a specific question.
+     * 
+     * @param key
+     *            The unique key of the question.
+     * @return The {@link AnswerResource}.
+     * @throws NotFoundException
+     *             If the question cannot be found or no answer has yet been
+     *             provided to it.
+     */
     @RequestMapping(value = "/questions/{key}/answer", method = RequestMethod.GET, produces = "application/json")
     public HttpEntity<AnswerResource> getAnswer(String key) throws NotFoundException {
         Answer answer = svc.getAnswer(key);
@@ -153,6 +252,12 @@ public class HrMaxQuizController {
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
     
+    /**
+     * Delete an answer previously provided to a question.
+     * 
+     * @param key
+     *            The unique key of the question.
+     */
     @RequestMapping(value = "/questions/{key}/answer", method = RequestMethod.DELETE)
     public void retractAnswer(@PathVariable(value = "key") String key) {
 
@@ -161,6 +266,11 @@ public class HrMaxQuizController {
         svc.retractAnswer(key);
     }
 
+    /**
+     * Find all the {@link Known} facts which have so far been derived.
+     * 
+     * @return A list of {@link Known}.
+     */
     @RequestMapping(value = "/knowns", method = RequestMethod.GET, produces = "application/json")
     public Collection<Known<?>> getKnowns() {
         Collection<Known<?>> knowns = svc.getKnowns();
@@ -170,6 +280,11 @@ public class HrMaxQuizController {
         return knowns;
     }
     
+    /**
+     * Find all the answers which have been provided so far.
+     * 
+     * @return A list of {@link AnswerResource}.
+     */
     @RequestMapping(value = "/answers", method = RequestMethod.GET, produces = "application/json")
     public HttpEntity<List<AnswerResource>> getAnswers() {
         Collection<Answer> answers = svc.getAnswers();
@@ -181,7 +296,14 @@ public class HrMaxQuizController {
         return new ResponseEntity<>(answerResources, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/results/hrmax", method = RequestMethod.GET, produces = "application/json")
+    /**
+     * Returns the {@link HrMax} if it has been calculated.
+     * @return The calculated {@link HrMax} details.
+     * @throws NotFoundException If HR Max has not yet been determined.
+     */
+    @RequestMapping(value = "/results/hrmax", 
+                    method = RequestMethod.GET, 
+                    produces = "application/json")
     public HrMax getHrMax() throws NotFoundException {
         HrMax hrMax = svc.getHrMax();
         
