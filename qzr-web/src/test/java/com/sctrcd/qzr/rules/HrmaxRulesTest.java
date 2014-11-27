@@ -7,7 +7,6 @@ import java.util.Collection;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kie.api.KieServices;
 import org.kie.api.event.rule.ObjectInsertedEvent;
 import org.kie.api.runtime.KieContainer;
@@ -15,8 +14,6 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sctrcd.beans.BeanPropertyFilter;
 import com.sctrcd.drools.DroolsUtil;
@@ -24,7 +21,6 @@ import com.sctrcd.drools.FactFinder;
 import com.sctrcd.drools.KieBuildException;
 import com.sctrcd.drools.monitoring.TrackingAgendaEventListener;
 import com.sctrcd.drools.monitoring.TrackingRuleRuntimeEventListener;
-import com.sctrcd.qzr.Qzr;
 import com.sctrcd.qzr.facts.HrMax;
 import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
@@ -34,8 +30,6 @@ import com.sctrcd.qzr.facts.Question;
  * 
  * @author Stephen Masters
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Qzr.class)
 public class HrmaxRulesTest {
 
     private static Logger log = LoggerFactory.getLogger(HrmaxRulesTest.class);
