@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.kie.api.KieServices;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.runtime.KieContainer;
@@ -44,10 +43,10 @@ import com.sctrcd.qzr.facts.Question;
  * @author Stephen Masters
  */
 @Service
-@Scope(value="session", proxyMode=ScopedProxyMode.INTERFACES)
-public class HrMaxQuizServiceImpl implements QuizService {
+@Scope(value="session", proxyMode=ScopedProxyMode.TARGET_CLASS)
+public class HrMaxQuizService {
 
-    private static Logger log = LoggerFactory.getLogger(HrMaxQuizServiceImpl.class);
+    private static Logger log = LoggerFactory.getLogger(HrMaxQuizService.class);
             
     private final KieSession kieSession;
     
@@ -61,11 +60,9 @@ public class HrMaxQuizServiceImpl implements QuizService {
     private final FactFinder<HrMax> hrMaxFinder = new FactFinder<>(HrMax.class);
     
     @Autowired
-    public HrMaxQuizServiceImpl(KieContainer kieContainer, SimpMessagingTemplate template) {
+    public HrMaxQuizService(KieContainer kieContainer, SimpMessagingTemplate template) {
         
         log.info("Initialising a new quiz session.");
-        
-        //this.kieSession = kieContainer.newKieSession();
         
         this.kieSession = kieContainer.newKieSession("HrmaxSession");
         

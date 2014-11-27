@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -32,7 +31,6 @@ import com.sctrcd.qzr.web.json.JsonJodaLocalDateSerializer;
  */
 @Configuration
 @ComponentScan
-@Import({HrmaxRulesConfig.class})
 @EnableAutoConfiguration
 @EnableConfigurationProperties
 public class Qzr {

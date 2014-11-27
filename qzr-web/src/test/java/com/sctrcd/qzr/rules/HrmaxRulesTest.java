@@ -15,7 +15,6 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -37,9 +36,9 @@ import com.sctrcd.qzr.facts.Question;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Qzr.class)
-public class HrmaxConventionRulesTest {
+public class HrmaxRulesTest {
 
-    private static Logger log = LoggerFactory.getLogger(HrmaxConventionRulesTest.class);
+    private static Logger log = LoggerFactory.getLogger(HrmaxRulesTest.class);
 
     private KieServices kieServices;
 

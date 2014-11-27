@@ -1,23 +1,18 @@
-package com.sctrcd.qzr.web.config;
+package com.sctrcd.qzr.web;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Collection;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.sctrcd.qzr.HrmaxRulesConfig;
 import com.sctrcd.qzr.Qzr;
-import com.sctrcd.qzr.facts.Known;
 import com.sctrcd.qzr.facts.Question;
-import com.sctrcd.qzr.services.QuizService;
+import com.sctrcd.qzr.services.HrMaxQuizService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Qzr.class)
@@ -26,20 +21,14 @@ import com.sctrcd.qzr.services.QuizService;
 public class QzrWebConfigTest {
 
     @Autowired
-    private QuizService healthQuizService;
+    private HrMaxQuizService healthQuizService;
 
     @Test
     public void shouldInjectBeans() {
         assertNotNull(healthQuizService);
-        healthQuizService.getNextQuestion();
-    }
-
-    @Test
-    public void shouldRemoveQuestionWhenAnswered() {
-        Question question = healthQuizService.getNextQuestion();
-        Collection<Known<?>> knowns = healthQuizService.getKnowns();
-
-        // questions.contains(o)
+        
+        Question initialQuestion = healthQuizService.getNextQuestion();
+        assertNotNull(initialQuestion);
     }
 
 }

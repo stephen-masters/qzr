@@ -20,7 +20,6 @@
 
 	<modules>
 		<module>sctrcd-drools</module>
-		<module>qzr-rules</module>
 		<module>qzr-web</module>
 	</modules>
 
