@@ -59,23 +59,22 @@ b=c(b,"angular",Object);b.$$minErr=b.$$minErr||d;return c(b,"module",function(){
      */
     (function(e,t){typeof module!="undefined"&&module.exports?module.exports=t():typeof define=="function"&&define.amd?define(t):this[e]=t()})("$script",function(){function h(e,t){for(var n=0,i=e.length;n<i;++n)if(!t(e[n]))return r;return 1}function p(e,t){h(e,function(e){return!t(e)})}function d(e,t,n){function g(e){return e.call?e():u[e]}function y(){if(!--m){u[o]=1,s&&s();for(var e in f)h(e.split("|"),g)&&!p(f[e],g)&&(f[e]=[])}}e=e[i]?e:[e];var r=t&&t.call,s=r?t:n,o=r?e.join(""):t,m=e.length;return setTimeout(function(){p(e,function t(e,n){if(e===null)return y();e=!n&&!/^https?:\/\//.test(e)&&c?c+e+".js":e;if(l[e]){o&&(a[o]=1),l[e]==2?y():setTimeout(t.bind(null,e,!0),0);return}l[e]=1,o&&(a[o]=1),v(e,y)})},0),d}function v(n,r){var i=e.createElement("script"),u;i.onload=i.onerror=i[o]=function(){if(i[s]&&!/^c|loade/.test(i[s])||u)return;i.onload=i[o]=null,u=1,l[n]=2,r()},i.async=1,i.src=n,t.insertBefore(i,t.lastChild)}var e=document,t=e.getElementsByTagName("head")[0],n="string",r=!1,i="push",s="readyState",o="onreadystatechange",u={},a={},f={},l={},c;return d.get=v,d.order=function(e,t,n){(function r(i){i=e.shift(),e.length?d(i,r):d(i,t,n)})()},d.path=function(e){c=e},d.ready=function(e,t,n){e=e[i]?e:[e];var r=[];return!p(e,function(e){u[e]||r[i](e)})&&h(e,function(e){return u[e]})?t():!function(e){f[e]=f[e]||[],f[e][i](t),n&&n(r)}(e.join("|")),d},d.done=function(e){d([null],e)},d})
 
-    $script(['lib/jquery/1.10.2/jquery.js'], 'jquery')
-    $script(['lib/angular-1.3.2/angular.min.js'], 'angular')
+    $script(['/webjars/jquery/1.10.2/jquery.min.js'], 'jquery')
+    $script(['/webjars/angularjs/1.3.4/angular.min.js'], 'angular')
     
     $script.ready(['angular'], function() {
-        $script([ 'lib/angular-1.3.2/angular-route.min.js',
-                  'lib/angular-1.3.2/angular-resource.min.js',
-                  'lib/angular-1.3.2/angular-sanitize.min.js',
-                  'lib/angular-1.3.2/angular-animate.min.js',
-                  'lib/angular-ui/0.2.8/angular-ui-router-min.js',
-                  'lib/calendar.js',
-                  'lib/ui-bootstrap-tpls-0.11.2.min.js',
-                  'lib/modernizr/2.7.1/modernizr-latest.js',
-                  'lib/underscore/1.6.0/underscore-min.js',
-                  'lib/moment.js/2.5.1/moment.min.js',
-                  'bootstrap/3.3.0/js/bootstrap.min.js',
-                  'lib/sockjs-0.3.4.js',
-                  'lib/stomp.js',
+        $script([ '/webjars/angularjs/1.3.4/angular-route.min.js',
+                  '/webjars/angularjs/1.3.4/angular-resource.min.js',
+                  '/webjars/angularjs/1.3.4/angular-sanitize.min.js',
+                  '/webjars/angularjs/1.3.4/angular-animate.min.js',
+                  '/webjars/angular-ui-router/0.2.8/angular-ui-router.min.js',
+                  '/webjars/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js',
+                  '/webjars/modernizr/2.7.1/modernizr.min.js',
+                  '/webjars/underscorejs/1.6.0/underscore-min.js',
+                  '/webjars/momentjs/2.5.1/min/moment.min.js',
+                  '/webjars/bootstrap/3.3.0/js/bootstrap.min.js',
+                  '/webjars/sockjs-client/0.3.4/sockjs.min.js',
+                  '/webjars/stomp-websocket/2.3.1/stomp.min.js',
                   'js/app.js',
                   'js/services.js',
                   'js/controllers.js',
@@ -91,7 +90,10 @@ b=c(b,"angular",Object);b.$$minErr=b.$$minErr||d;return c(b,"module",function(){
   </script>
   <title>Qzr</title>
   
-  <link rel="stylesheet" href="bootstrap/3.1.0/css/bootstrap.css">
+  <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.0/css/bootstrap.min.css"
+      th:href="@{/webjars/bootstrap/3.3.0/css/bootstrap.min.css}"
+      rel="stylesheet" media="screen" />
+
   <link rel="stylesheet" href="css/app.css">
   
 </head>
