@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.kie.api.KieServices;
+import org.kie.api.runtime.KieContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -58,6 +60,11 @@ public class Qzr {
             sb.append("        " + beanName + "\n");
         }
         log.info(sb.toString());
+    }
+    
+    @Bean
+    public KieContainer kieContainer() {
+        return KieServices.Factory.get().getKieClasspathContainer();
     }
     
     /**
