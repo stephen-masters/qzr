@@ -16,7 +16,6 @@ import org.kie.api.builder.Message;
 import org.kie.api.builder.Message.Level;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
-import org.kie.api.event.rule.ObjectInsertedEvent;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.ObjectFilter;
@@ -26,9 +25,6 @@ import org.kie.internal.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sctrcd.beans.BeanMatcher;
-import com.sctrcd.drools.monitoring.Activation;
-
 /**
  * 
  * @author Stephen Masters
@@ -36,8 +32,6 @@ import com.sctrcd.drools.monitoring.Activation;
 public class DroolsUtil {
 
     private static Logger log = LoggerFactory.getLogger(DroolsUtil.class);
-    
-    private static BeanMatcher matcher = new BeanMatcher();
     
     /**
      * Private to prevent instantiation. Everything here should be called statically.
@@ -71,8 +65,8 @@ public class DroolsUtil {
      *            An array of {@link DroolsResource} indicating where the
      *            various resources should be loaded from. These could be
      *            classpath, file or URL resources.
-     * @return A new {@link KieContainer}.
-     * @throws KieBuildException 
+     * @return A new {@link KieServices}.
+     * @throws KieBuildException I there are errors whilst building the {@link KieServices}.
      */
     public static KieServices createAndBuildKieServices(DroolsResource[] resources) throws KieBuildException {
         KieServices kieServices = KieServices.Factory.get();
@@ -110,6 +104,10 @@ public class DroolsUtil {
         
         KieBuilder kieBuilder = kieServices.newKieBuilder(kfs).buildAll();
         
+        // The KieBuilder contains a collection of messages, which is built up
+        // as it does its job. If any of these have a level of 'ERROR', then the
+        // rules did not compile correctly. Therefore we log such messages and 
+        // throw an exception to indicate failure.
         if (kieBuilder.getResults().hasMessages(Level.ERROR)) {
             List<Message> errors = kieBuilder.getResults().getMessages(Level.ERROR);
             StringBuilder sb = new StringBuilder("Errors:");
@@ -154,11 +152,19 @@ public class DroolsUtil {
         }
     }
 
+    /**
+     * Uses Apache Commons {@link BeanUtils} to get the public properties of an
+     * object (the 'get' and 'is' methods) and build them up into a readable
+     * description of that object.
+     * 
+     * @param o
+     *            The object.
+     * @return A {@link String} describing the object.
+     */
     public static String objectDetails(Object o) {
         StringBuilder sb = new StringBuilder(o.getClass().getSimpleName());
 
         try {
-            @SuppressWarnings("unchecked")
             Map<String, String> objectProperties = BeanUtils.describe(o);
             for (String k : objectProperties.keySet()) {
                 sb.append(", " + k + "=\"" + objectProperties.get(k) + "\"");
@@ -171,75 +177,6 @@ public class DroolsUtil {
             return "NoSuchMethodException attempting to parse object.";
         }
 
-        return sb.toString();
-    }
-
-    public static Object findInsertedFact(List<ObjectInsertedEvent> insertions,
-            String factType, String[] filters) {
-        for (ObjectInsertedEvent event : insertions) {
-            Object fact = event.getObject();
-
-            if (factType.equals(fact.getClass().getSimpleName())) {
-                if (matcher.matches(fact, filters)) {
-                    return fact;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Search for an activation by rule name. Note that when using decision
-     * tables, the rule name is generated as <code>Row N Rule_Name</code>. This
-     * means that we can't just search for exact matches. This method will
-     * therefore return true if an activation ends with the ruleName argument.
-     * 
-     * @param ruleName
-     *            The name of the rule we're looking for.
-     */
-    public static boolean ruleFired(List<Activation> activations,
-            String ruleName) {
-        for (Activation activation : activations) {
-            if (activation.getRuleName().toUpperCase()
-                    .endsWith(ruleName.toUpperCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Given a list of rule activations and a list of rule names, did all of the
-     * rules in the list provided get fired? This is a utility method designed
-     * primarily to help with testing.
-     * 
-     * @param ruleName
-     *            The list of rule names we're looking for.
-     */
-    public static boolean allRulesFired(List<Activation> activations,
-            String[] ruleNames) {
-        for (String ruleName : ruleNames) {
-            if (!ruleFired(activations, ruleName)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns a <code>String</code> showing the rule names that were expected
-     * to fire, and whether or not they fired, ready to be logged.
-     * 
-     * @param ruleName
-     *            The list of rule names we're looking for.
-     */
-    public static String prettyRulesFired(List<Activation> activations,
-            String[] ruleNames) {
-        StringBuilder sb = new StringBuilder();
-        for (String ruleName : ruleNames) {
-            sb.append("\n    " + ruleName + " : "
-                    + (ruleFired(activations, ruleName) ? "Y" : "N"));
-        }
         return sb.toString();
     }
 
@@ -304,8 +241,15 @@ public class DroolsUtil {
         return ksession.getFactHandles(filter);
     }
     
+    /**
+     * Gets handles to all facts in the {@link KieSession} and then retracts
+     * them all.
+     * 
+     * @param ksession
+     *            The {@link KieSession} we wish to clear down.
+     */
     public static void retractAll(KieSession ksession) {
-        log.debug("Retracting all facts matching filter...");
+        log.debug("Retracting all facts...");
         retract(ksession, ksession.getFactHandles());
     }
     
@@ -346,6 +290,14 @@ public class DroolsUtil {
         }
     }
 
+    /**
+     * Retract a specific fact from the {@link KieSession}.
+     * 
+     * @param ksession
+     *            The {@link KieSession} containing the fact.
+     * @param handle
+     *            A handle to the fact we wish to retract.
+     */
     public static void retract(KieSession ksession, FactHandle handle) {
         ksession.delete(handle);
     }

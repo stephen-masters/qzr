@@ -14,6 +14,7 @@ import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sctrcd.beans.BeanMatcher;
 import com.sctrcd.drools.DroolsUtil;
 
 /**
@@ -106,6 +107,21 @@ public class TrackingRuleRuntimeEventListener
         }
     }
 
+    public Object findInsertedFact(String factType, String[] filters) {
+        BeanMatcher matcher = new BeanMatcher();
+        
+        for (ObjectInsertedEvent event : this.insertions) {
+            Object fact = event.getObject();
+
+            if (factType.equals(fact.getClass().getSimpleName())) {
+                if (matcher.matches(fact, filters)) {
+                    return fact;
+                }
+            }
+        }
+        return null;
+    }
+    
     public List<RuleRuntimeEvent> getAllEvents() {
         return allEvents;
     }
