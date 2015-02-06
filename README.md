@@ -11,6 +11,8 @@ This is intended as a relatively minimal web application to demonstrate web serv
 
 As such, it has ended somewhat more complex than might be expected for a tutorial in any one of these technologies. But hopefully not a lot. Attempts have been made to keep the different technologies separated into appropriate modules of the project. For instance, Spring makes minimal intrusion into the `qzr-rules` module. The web application Java code is limited to a service for the business logic and a REST API. The UI is provided by a single-page AngularJS application, which makes calls to the REST API.
 
+For something similar, which tries harder to keep itself restricted to running Drools 6 on Spring Boot, take a look at: https://github.com/gratiartis/buspass-ws
+
 **Run the application**
 
 I have set this up with a Maven build and it also requires Java 8. So `cd` into the project directory and run:
