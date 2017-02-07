@@ -63,6 +63,7 @@ public class HrmaxRulesTest {
 
         this.kieServices = KieServices.Factory.get();
         this.kieContainer = kieServices.getKieClasspathContainer(); 
+        
         this.kieSession = kieContainer.newKieSession("HrmaxSession");
         
         agendaEventListener = new TrackingAgendaEventListener();
@@ -73,7 +74,8 @@ public class HrmaxRulesTest {
     }
 
     /**
-     * If this passes, then the Spring components were autowired.
+     * If this passes, then the Drools {@link KieSession} was started without
+     * errors.
      */
     @Test
     public void shouldConfigureDroolsComponents() {
@@ -84,6 +86,11 @@ public class HrmaxRulesTest {
         }
     }
 
+    /**
+     * The first thing that we need to know to determine is the date of birth of
+     * a person. Confirm that if the date of birth is not known, the rules will
+     * insert a question asking for it.
+     */
     @Test
     public void shouldAskDateOfBirthIfUnknown() {
         kieSession.fireAllRules();
@@ -95,6 +102,9 @@ public class HrmaxRulesTest {
         System.out.println("ALl questions: " + allQuestions);
 
         assertEquals("Should ask date of birth if not known.", 1, dateOfBirthQuestions.size());
+        
+        // Now that the question has been asked, we provide an answer.
+        // So the rules should not ask again.
         
         LocalDate dob = new LocalDate(1980, 06, 06); 
         
@@ -109,6 +119,10 @@ public class HrmaxRulesTest {
         assertEquals("Should not ask date of birth if already known.", 0, dateOfBirthQuestions.size());
     }
     
+    /**
+     * If a date of birth is provided, then the rules should infer the person's
+     * age. The inferred age is used in heart rate calculations later on.
+     */
     @Test
     public void shouldInferAge() {
         LocalDate today = new LocalDate(kieSession.getSessionClock().getCurrentTime());
@@ -150,6 +164,15 @@ public class HrmaxRulesTest {
         assertTrue("Should calculate female-adjusted HR max if date of birth is known and is female.", hasHrMax(173));
     }
 
+    /**
+     * Searches for {@link Known} facts in the {@link KieSession}. If one of
+     * them is equal to the 'expected' {@link Known} provided, then this method
+     * returns true. Otherwise it returns false.
+     * 
+     * @param key
+     * @param expected
+     * @return
+     */
     private boolean hasKnownValue(String key, Object expected) {
         Collection<Known<?>> facts = knownFinder.findFacts(kieSession, new BeanPropertyFilter("key", key));
         assertEquals(1, facts.size());

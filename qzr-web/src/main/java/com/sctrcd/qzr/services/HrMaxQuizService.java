@@ -77,7 +77,6 @@ public class HrMaxQuizService {
         this.kieSession.fireAllRules();
     }
 
-    //@Override
     public List<Question> allQuestions() {
         List<Question> questions = questionFinder.findFacts(kieSession);
         List<Question> answeredQuestions = answerFinder.findFacts(kieSession)
@@ -94,7 +93,6 @@ public class HrMaxQuizService {
         return answeredQuestions;
     }
     
-    //@Override
     public Question getNextQuestion() {
         List<Question> questions = questionFinder.findFacts(kieSession);
         
@@ -106,7 +104,6 @@ public class HrMaxQuizService {
         return nextQuestion;
     }
     
-    //@Override
     public Question getQuestion(String key) {
         List<Question> questions = questionFinder.findFacts(kieSession, 
                 new BeanPropertyFilter("key", key));
@@ -123,19 +120,16 @@ public class HrMaxQuizService {
         return null;
     }
 
-    //@Override
     public Collection<Known<?>> getKnowns() {
         Collection<Known<?>> knowns = knownFinder.findFacts(kieSession);
         return knowns;
     }
     
-    //@Override
     public Collection<Answer> getAnswers() {
         Collection<Answer> answers = answerFinder.findFacts(kieSession);
         return answers;
     }
     
-    //@Override
     public Answer getAnswer(String key) {
         Collection<Answer> answers = answerFinder.findFacts(kieSession, 
                 new BeanPropertyFilter("key", key));
@@ -149,26 +143,22 @@ public class HrMaxQuizService {
         return answers.iterator().next();
     }
 
-    //@Override
     public Answer answer(Answer answer) {
         kieSession.insert(answer);
         kieSession.fireAllRules();
         return answer;
     }
     
-    //@Override
     public void retractAnswer(String key) {
         answerFinder.deleteFacts(kieSession, new BeanPropertyFilter("key", key));
         kieSession.fireAllRules();
     }
     
-    //@Override
     public void answer(Known<?> known) {
         kieSession.insert(known);
         kieSession.fireAllRules();
     }
 
-    //@Override
     public HrMax getHrMax() {
         Collection<HrMax> answers = hrMaxFinder.findFacts(kieSession);
         

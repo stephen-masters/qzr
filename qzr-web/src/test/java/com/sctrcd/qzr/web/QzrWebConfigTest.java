@@ -14,6 +14,12 @@ import com.sctrcd.qzr.Qzr;
 import com.sctrcd.qzr.facts.Question;
 import com.sctrcd.qzr.services.HrMaxQuizService;
 
+/**
+ * A test to confirm that the web application can be set up and that the beans
+ * which should be autowired/injected by Spring are set up correctly.
+ * 
+ * @author Stephen Masters
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Qzr.class)
 @WebAppConfiguration
