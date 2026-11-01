@@ -7,7 +7,7 @@ import com.sctrcd.qzr.web.controllers.HrMaxQuizController;
  * Used by exceptions within the application to provide a code and a more
  * descriptive reason. Exception handlers in the {@link HrMaxQuizController} are
  * designed to parse this so that a nicely structured JSON message is returned.
- * 
+ *
  * @author Stephen Masters
  */
 @JsonInclude()
@@ -38,5 +38,4 @@ public class QuizException extends Exception {
     public String toString() {
         return "Error [" + code + "]:" + getMessage();
     }
-
 }

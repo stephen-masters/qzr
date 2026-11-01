@@ -1,28 +1,23 @@
 package com.sctrcd.qzr.web.resources;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.joda.time.DateTime;
-import org.springframework.hateoas.ResourceSupport;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.sctrcd.qzr.web.json.JsonJodaDateTimeSerializer;
+import org.joda.time.DateTime;
+import org.springframework.hateoas.RepresentationModel;
+import tools.jackson.databind.annotation.JsonSerialize;
 
-@XmlRootElement(name = "answer")
-public class AnswerResource extends ResourceSupport {
+public class AnswerResource extends RepresentationModel<AnswerResource> {
 
     private String key;
     private String value;
     private DateTime when;
 
-    public AnswerResource() {
-    }
+    public AnswerResource() {}
 
     public AnswerResource(String key, String value) {
         this.key = key;
         this.value = value;
     }
-    
+
     public String getKey() {
         return key;
     }
@@ -49,8 +44,6 @@ public class AnswerResource extends ResourceSupport {
     }
 
     public String toString() {
-        return this.getClass().getSimpleName() 
-                + ": { key=\"" + key + "\", value=\"" + value + "\" }";
+        return this.getClass().getSimpleName() + ": { key=\"" + key + "\", value=\"" + value + "\" }";
     }
-
 }

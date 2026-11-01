@@ -2,32 +2,29 @@ package com.sctrcd.drools.testfacts;
 
 public class Product {
 
-	private String name;
-	private int count;
-	
-	public Product() {
-		
-	}
-	
-	public Product(String name, int count) {
-		this.name = name;
-		this.count = count;
-	}
+    private String name;
+    private int count;
 
-	public String getName() {
-		return name;
-	}
+    public Product() {}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Product(String name, int count) {
+        this.name = name;
+        this.count = count;
+    }
 
-	public int getCount() {
-		return count;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setCount(int count) {
-		this.count = count;
-	}
-	
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }

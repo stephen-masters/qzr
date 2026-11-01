@@ -1,50 +1,45 @@
 package com.sctrcd.qzr.web.resources;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
-import org.springframework.stereotype.Component;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.sctrcd.qzr.facts.Question;
 import com.sctrcd.qzr.web.controllers.HrMaxQuizController;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.stereotype.Component;
 
 /**
  * Injected into the {@link HrMaxQuizController} as a tool for building {@link QuestionResource}.
- * 
+ *
  * @author Stephen Masters
  */
 @Component
-public class QuestionResourceAssembler extends ResourceAssemblerSupport<Question, QuestionResource> {
+public class QuestionResourceAssembler extends RepresentationModelAssemblerSupport<Question, QuestionResource> {
 
-    @Autowired
-    AnswerResourceAssembler answerResourceAssembler;
-    
-    public QuestionResourceAssembler() {
+    private final AnswerResourceAssembler answerResourceAssembler;
+
+    public QuestionResourceAssembler(AnswerResourceAssembler answerResourceAssembler) {
         super(HrMaxQuizController.class, QuestionResource.class);
+        this.answerResourceAssembler = answerResourceAssembler;
     }
 
     @Override
-    public QuestionResource toResource(Question question) {
+    public QuestionResource toModel(Question question) {
 
-        System.out.println("Question: " + question);
-        
-        QuestionResource resource = createResourceWithId("questions/" + question.getKey(), question);
+        QuestionResource resource = createModelWithId("questions/" + question.getKey(), question);
 
         resource.setKey(question.getKey());
-        resource.setText(question.getQuestion().toString());
+        resource.setText(question.getQuestion());
         resource.setAnswerType(question.getAnswerType());
-        
+
         resource.addOptions(question.getOptions());
 
         if (question.getAnswer() != null) {
-            resource.setAnswer(answerResourceAssembler.toResource(question.getAnswer()));
+            resource.setAnswer(answerResourceAssembler.toModel(question.getAnswer()));
         }
-        
+
         try {
-            resource.add(linkTo(methodOn(HrMaxQuizController.class)
-                    .answer(question.getKey(), new AnswerResource()))
+            resource.add(linkTo(methodOn(HrMaxQuizController.class).answer(question.getKey(), new AnswerResource()))
                     .withRel("answer"));
         } catch (BadRequestException e) {
             // Do nothing...
@@ -52,5 +47,4 @@ public class QuestionResourceAssembler extends ResourceAssemblerSupport<Question
 
         return resource;
     }
-
 }
