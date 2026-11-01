@@ -1,21 +1,19 @@
 package com.sctrcd.drools.monitoring;
 
+import com.sctrcd.beans.BeanMatcher;
+import com.sctrcd.drools.DroolsUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.beanutils.BeanUtils;
-import org.kie.api.event.rule.ObjectInsertedEvent;
+import org.kie.api.event.rule.DefaultRuleRuntimeEventListener;
 import org.kie.api.event.rule.ObjectDeletedEvent;
+import org.kie.api.event.rule.ObjectInsertedEvent;
 import org.kie.api.event.rule.ObjectUpdatedEvent;
 import org.kie.api.event.rule.RuleRuntimeEvent;
-import org.drools.core.event.DefaultRuleRuntimeEventListener;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sctrcd.beans.BeanMatcher;
-import com.sctrcd.drools.DroolsUtil;
 
 /**
  * When validation rules fire, they should insert a TradeValidationAnnotation
@@ -25,11 +23,10 @@ import com.sctrcd.drools.DroolsUtil;
  * You should probably avoid using this outside testing, as the contained lists
  * of events will grow and grow.
  * </p>
- * 
+ *
  * @author Stephen Masters
  */
-public class TrackingRuleRuntimeEventListener
-            extends DefaultRuleRuntimeEventListener {
+public class TrackingRuleRuntimeEventListener extends DefaultRuleRuntimeEventListener {
 
     private static Logger log = LoggerFactory.getLogger(TrackingRuleRuntimeEventListener.class);
 
@@ -50,18 +47,18 @@ public class TrackingRuleRuntimeEventListener
     public TrackingRuleRuntimeEventListener() {
         this.handleFilter = null;
     }
-    
+
     /**
      * Constructor which sets up an event filter. The listener will only record
      * events when the event {@link FactHandle} matches the constructor argument.
-     * 
+     *
      * @param handle
      *            The {@link FactHandle} to filter on.
      */
     public TrackingRuleRuntimeEventListener(FactHandle handle) {
         this.handleFilter = handle;
     }
-    
+
     public TrackingRuleRuntimeEventListener(Class<?> classFilter) {
         this.handleFilter = null;
         this.classFilter = classFilter;
@@ -69,7 +66,7 @@ public class TrackingRuleRuntimeEventListener
 
     @Override
     public void objectInserted(final ObjectInsertedEvent event) {
-        if ((handleFilter == null  && classFilter == null)
+        if ((handleFilter == null && classFilter == null)
                 || event.getFactHandle() == handleFilter
                 || event.getObject().getClass().equals(classFilter)) {
             insertions.add(event);
@@ -80,7 +77,7 @@ public class TrackingRuleRuntimeEventListener
 
     @Override
     public void objectDeleted(final ObjectDeletedEvent event) {
-        if ((handleFilter == null  && classFilter == null) 
+        if ((handleFilter == null && classFilter == null)
                 || event.getFactHandle() == handleFilter
                 || event.getOldObject().getClass().equals(classFilter)) {
             deletions.add(event);
@@ -91,7 +88,7 @@ public class TrackingRuleRuntimeEventListener
 
     @Override
     public void objectUpdated(final ObjectUpdatedEvent event) {
-        if ((handleFilter == null  && classFilter == null) 
+        if ((handleFilter == null && classFilter == null)
                 || event.getFactHandle() == handleFilter
                 || event.getObject().getClass().equals(classFilter)) {
             updates.add(event);
@@ -109,7 +106,7 @@ public class TrackingRuleRuntimeEventListener
 
     public Object findInsertedFact(String factType, String[] filters) {
         BeanMatcher matcher = new BeanMatcher();
-        
+
         for (ObjectInsertedEvent event : this.insertions) {
             Object fact = event.getObject();
 
@@ -121,7 +118,7 @@ public class TrackingRuleRuntimeEventListener
         }
         return null;
     }
-    
+
     public List<RuleRuntimeEvent> getAllEvents() {
         return allEvents;
     }
@@ -143,18 +140,17 @@ public class TrackingRuleRuntimeEventListener
     }
 
     public String getPrintableSummary() {
-        return "TrackingWorkingMemoryEventListener: " +
-                "insertions=[" + insertions.size() + "], " +
-                "retractions=[" + deletions.size() + "], " +
-                "updates=[" + updates.size() + "]";
+        return "TrackingWorkingMemoryEventListener: " + "insertions=["
+                + insertions.size() + "], " + "retractions=["
+                + deletions.size() + "], " + "updates=["
+                + updates.size() + "]";
     }
 
     public String getPrintableDetail() {
-        StringBuilder report = new StringBuilder(
-                "TrackingWorkingMemoryEventListener: " + "insertions=["
-                        + insertions.size() + "], " + "retractions=["
-                        + deletions.size() + "], " + "updates=["
-                        + updates.size() + "]");
+        StringBuilder report = new StringBuilder("TrackingWorkingMemoryEventListener: " + "insertions=["
+                + insertions.size() + "], " + "retractions=["
+                + deletions.size() + "], " + "updates=["
+                + updates.size() + "]");
 
         for (ObjectInsertedEvent event : insertions) {
             report.append("\n" + DroolsUtil.objectDetails(event.getObject()));
@@ -168,5 +164,4 @@ public class TrackingRuleRuntimeEventListener
 
         return report.toString();
     }
-
 }

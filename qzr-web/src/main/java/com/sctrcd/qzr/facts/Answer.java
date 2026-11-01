@@ -1,17 +1,14 @@
 package com.sctrcd.qzr.facts;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 /**
  * An answer to a question. The key is the same as the question for which this
  * is an answer.
- * 
+ *
  * @author Stephen Masters
  */
-@XmlRootElement(name = "known")
 public class Answer {
 
     private String key;
@@ -19,8 +16,7 @@ public class Answer {
     private Question question;
     private DateTime when;
 
-    public Answer() {
-    }
+    public Answer() {}
 
     public Answer(String key, String value) {
         this(key, value, DateTime.now(DateTimeZone.UTC));
@@ -35,6 +31,7 @@ public class Answer {
     public Answer(String key, String value, Question question, DateTime when) {
         this.key = key;
         this.value = value;
+        this.question = question;
         this.when = when;
     }
 
@@ -71,8 +68,6 @@ public class Answer {
     }
 
     public String toString() {
-        return this.getClass().getSimpleName() + ": { key=\"" + key
-                + "\", value=\"" + value + "\" }";
+        return this.getClass().getSimpleName() + ": { key=\"" + key + "\", value=\"" + value + "\" }";
     }
-
 }

@@ -3,15 +3,15 @@ package com.sctrcd.beans;
 /**
  * A name/value pair where the name is the name of a bean property and value is
  * the object that should be returned. Such that, as an example:
- * 
+ *
  * <pre>
  * anObject.get&lt;PropertyName&gt;().equals(thisFilter.getPropertyValue)
  * </pre>
- * 
+ *
  * It should be noted that in the case of the {@link BeanMatcher},
  * the comparison will be on whether the String representations of the two
  * objects are equal.
- * 
+ *
  * @author Stephen Masters
  */
 public class BeanPropertyFilter {
@@ -28,7 +28,7 @@ public class BeanPropertyFilter {
     }
 
     /**
-     * 
+     *
      * @param propertyName The name of the property we are filtering on. i.e. There should be a "get" method.
      * @param propertyValue The expected value of the property we are filtering on.
      */
@@ -68,5 +68,4 @@ public class BeanPropertyFilter {
     public String toString() {
         return "BeanProperty:{name=" + propertyName + ", value=" + propertyValue + "}";
     }
-
 }

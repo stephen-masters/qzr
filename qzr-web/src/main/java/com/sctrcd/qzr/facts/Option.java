@@ -4,7 +4,7 @@ package com.sctrcd.qzr.facts;
  * A {@link Question} can define a list of options which can be used as answers.
  * These comprise a key, which will be used to identify the option internally,
  * and a value, which is a more human-readable value.
- * 
+ *
  * @author Stephen Masters
  */
 public class Option {
@@ -13,8 +13,7 @@ public class Option {
 
     private String text;
 
-    public Option() {
-    }
+    public Option() {}
 
     public Option(String key, String text) {
         this.key = key;
@@ -43,8 +42,7 @@ public class Option {
 
     @Override
     public boolean equals(Object that) {
-        if (that == null)
-            return false;
+        if (that == null) return false;
         if (that instanceof Option) {
             return this.key.equals(((Option) that).getKey());
         }
@@ -54,5 +52,4 @@ public class Option {
     public String toString() {
         return "Option: { key=" + key + ", text=" + text + " }";
     }
-
 }

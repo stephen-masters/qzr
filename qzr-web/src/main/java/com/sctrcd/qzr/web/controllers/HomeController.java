@@ -6,14 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Provides the request mapping for the home page. As this is a single-page app,
  * this is the only mapping needed.
- * 
+ *
  * @author Stephen Masters
  */
 @Controller
 public class HomeController {
 
-    public HomeController() {
-    }
+    public HomeController() {}
 
     /**
      * This will render using the Thymeleaf template:
@@ -23,5 +22,4 @@ public class HomeController {
     String index() {
         return "index";
     }
-
 }

@@ -4,28 +4,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * A list of {@link Question}.
- * 
+ *
  * @author Stephen Masters
  */
-@XmlRootElement(name = "questions")
 public class QuestionList {
 
     private List<Question> questions;
 
-    public QuestionList() {
-
-    }
+    public QuestionList() {}
 
     public QuestionList(Collection<Question> questions) {
         this.questions = new ArrayList<>(questions);
     }
 
-    @XmlElement(name = "question")
     public List<Question> getQuestions() {
         return questions;
     }
@@ -33,7 +26,7 @@ public class QuestionList {
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
-    
+
     public void add(Question question) {
         if (this.questions == null) this.questions = new ArrayList<>();
         this.questions.add(question);
@@ -51,5 +44,4 @@ public class QuestionList {
             return sb.substring(0, sb.length() - 3) + " ]}";
         }
     }
-    
 }

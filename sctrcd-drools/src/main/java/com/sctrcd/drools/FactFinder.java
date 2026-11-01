@@ -1,23 +1,21 @@
 package com.sctrcd.drools;
 
+import com.sctrcd.beans.BeanMatcher;
+import com.sctrcd.beans.BeanPropertyFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.ObjectFilter;
 import org.kie.api.runtime.rule.FactHandle;
-
-import com.sctrcd.beans.BeanMatcher;
-import com.sctrcd.beans.BeanPropertyFilter;
 
 public class FactFinder<T> {
 
     private BeanMatcher beanMatcher = new BeanMatcher();
 
     private Class<?> classToFind;
-    
+
     public FactFinder(Class<?> classToFind) {
         this.classToFind = classToFind;
     }
@@ -25,7 +23,7 @@ public class FactFinder<T> {
     /**
      * An assertion that a fact of the expected class with specified properties
      * is in working memory.
-     * 
+     *
      * @param session
      *            A {@link KnowledgeSession} in which we are looking for the
      *            fact.
@@ -43,8 +41,7 @@ public class FactFinder<T> {
         ObjectFilter filter = new ObjectFilter() {
             @Override
             public boolean accept(Object object) {
-                return object.getClass().equals(classToFind) 
-                        && beanMatcher.matches(object, expectedProperties);
+                return object.getClass().equals(classToFind) && beanMatcher.matches(object, expectedProperties);
             }
         };
 
@@ -55,7 +52,7 @@ public class FactFinder<T> {
         }
         return facts;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<T> findFacts(final KieSession session) {
 
@@ -73,14 +70,13 @@ public class FactFinder<T> {
         }
         return facts;
     }
-    
+
     public void deleteFacts(final KieSession session, final BeanPropertyFilter... expectedProperties) {
 
         ObjectFilter filter = new ObjectFilter() {
             @Override
             public boolean accept(Object object) {
-                return object.getClass().equals(classToFind) 
-                        && beanMatcher.matches(object, expectedProperties);
+                return object.getClass().equals(classToFind) && beanMatcher.matches(object, expectedProperties);
             }
         };
 
@@ -89,5 +85,4 @@ public class FactFinder<T> {
             session.delete(handle);
         }
     }
-
 }

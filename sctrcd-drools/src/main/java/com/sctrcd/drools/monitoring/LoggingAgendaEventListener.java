@@ -6,10 +6,9 @@ import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A listener that will track all rule firings in a session.
- * 
+ *
  * @author Stephen Masters
  */
 public class LoggingAgendaEventListener extends DefaultAgendaEventListener {
@@ -29,5 +28,4 @@ public class LoggingAgendaEventListener extends DefaultAgendaEventListener {
     public String toString() {
         return LoggingAgendaEventListener.class.getSimpleName();
     }
-
 }
