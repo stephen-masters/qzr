@@ -1,0 +1,18 @@
+package rules
+
+import com.sctrcd.drools.testfacts.Customer
+import com.sctrcd.drools.testfacts.Product
+
+rule "Greet customer"
+when
+    $customer: Customer(greeted == false)
+then
+    modify($customer) { setGreeted(true) }
+end
+
+rule "Restock product"
+when
+    $product: Product(count == 0)
+then
+    modify($product) { setCount(10) }
+end

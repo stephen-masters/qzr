@@ -1,0 +1,9 @@
+package rules
+
+import com.sctrcd.drools.testfacts.Customer
+
+rule "Refers to a property that does not exist"
+when
+    Customer(shoeSize > 10)
+then
+end
